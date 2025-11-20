@@ -2,8 +2,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using System.Linq;
 using DesktopOrganizer.Core.Interfaces;
 using DesktopOrganizer.Core.Services;
+using DesktopOrganizer.Core.Models;
+using DesktopOrganizer.UI.Views;
 
 namespace DesktopOrganizer.UI.ViewModels;
 
@@ -11,6 +14,10 @@ public class MainWindowViewModel : INotifyPropertyChanged
 {
     private readonly IFileWatcher _fileWatcher;
     private readonly FileOrganizer _fileOrganizer;
+    private readonly System.Func<RuleEditorView> _ruleEditorFactory;
+    private readonly System.Func<LogsView> _logsViewFactory;
+    private readonly System.Func<SettingsView> _settingsViewFactory;
+    private readonly IRepository<UserPreferences> _prefsRepository;
     
     private string _statusMessage = "Ready";
     private bool _isMonitoring;
@@ -41,19 +48,70 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public string StartStopButtonText => IsMonitoring ? "Stop Monitoring" : "Start Monitoring";
 
     public ICommand ToggleMonitoringCommand { get; }
+    public ICommand OpenRuleEditorCommand { get; }
+    public ICommand OpenLogsCommand { get; }
+    public ICommand OpenSettingsCommand { get; }
 
-    public MainWindowViewModel(IFileWatcher fileWatcher, FileOrganizer fileOrganizer)
+    public MainWindowViewModel(
+        IFileWatcher fileWatcher, 
+        FileOrganizer fileOrganizer, 
+        System.Func<RuleEditorView> ruleEditorFactory,
+        System.Func<LogsView> logsViewFactory,
+        System.Func<SettingsView> settingsViewFactory,
+        IRepository<UserPreferences> prefsRepository)
     {
         _fileWatcher = fileWatcher;
         _fileOrganizer = fileOrganizer;
+        _ruleEditorFactory = ruleEditorFactory;
+        _logsViewFactory = logsViewFactory;
+        _settingsViewFactory = settingsViewFactory;
+        _prefsRepository = prefsRepository;
         
         ToggleMonitoringCommand = new RelayCommand(ToggleMonitoring);
+        OpenRuleEditorCommand = new RelayCommand(OpenRuleEditor);
+        OpenLogsCommand = new RelayCommand(OpenLogs);
+        OpenSettingsCommand = new RelayCommand(OpenSettings);
         
         // Subscribe to events
         _fileWatcher.FileCreated += OnFileDetected;
+
+        // Load rules
+        InitializeAsync();
     }
 
-    private void ToggleMonitoring(object? parameter)
+    private void OpenRuleEditor(object? parameter)
+    {
+        var ruleEditor = _ruleEditorFactory();
+        ruleEditor.Show();
+    }
+
+    private void OpenLogs(object? parameter)
+    {
+        var logsView = _logsViewFactory();
+        logsView.Show();
+    }
+
+    private void OpenSettings(object? parameter)
+    {
+        var settingsView = _settingsViewFactory();
+        settingsView.Show();
+    }
+
+    private async void InitializeAsync()
+    {
+        try
+        {
+            StatusMessage = "Loading rules...";
+            await _fileOrganizer.LoadRulesAsync();
+            StatusMessage = "Ready";
+        }
+        catch (System.Exception ex)
+        {
+            StatusMessage = $"Error loading rules: {ex.Message}";
+        }
+    }
+
+    private async void ToggleMonitoring(object? parameter)
     {
         if (IsMonitoring)
         {
@@ -65,9 +123,23 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             try
             {
-                string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
-                _fileWatcher.StartMonitoring(desktopPath);
-                StatusMessage = $"Monitoring started on {desktopPath}";
+                // Get path from preferences
+                var prefs = (await _prefsRepository.GetAllAsync()).FirstOrDefault();
+                string path = prefs?.MonitoredDirectories ?? System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+                
+                // Handle multiple paths if semicolon separated (just take first for now as FileWatcherService supports one)
+                if (path.Contains(";"))
+                {
+                    path = path.Split(';')[0];
+                }
+
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                     path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+                }
+
+                _fileWatcher.StartMonitoring(path);
+                StatusMessage = $"Monitoring started on {path}";
                 IsMonitoring = true;
             }
             catch (System.Exception ex)
@@ -109,5 +181,10 @@ public class RelayCommand : ICommand
     {
         add { CommandManager.RequerySuggested += value; }
         remove { CommandManager.RequerySuggested -= value; }
+    }
+
+    public void RaiseCanExecuteChanged()
+    {
+        CommandManager.InvalidateRequerySuggested();
     }
 }

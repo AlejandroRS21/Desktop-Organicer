@@ -1,0 +1,17 @@
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Data.deps.json
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Data.runtimeconfig.json
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Data.dll
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Data.pdb
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Core.dll
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Core.pdb
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.csproj.AssemblyReference.cache
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.GeneratedMSBuildEditorConfig.editorconfig
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.AssemblyInfoInputs.cache
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.AssemblyInfo.cs
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.csproj.CoreCompileInputs.cache
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopO.CCE044A9.Up2Date
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.dll
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\refint\DesktopOrganizer.Data.dll
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.pdb
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.genruntimeconfig.cache
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\ref\DesktopOrganizer.Data.dll

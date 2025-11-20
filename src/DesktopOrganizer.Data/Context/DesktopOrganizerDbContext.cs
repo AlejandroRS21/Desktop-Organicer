@@ -8,6 +8,7 @@ public class DesktopOrganizerDbContext : DbContext
     public DbSet<Category> Categories { get; set; } = null!;
     public DbSet<Rule> Rules { get; set; } = null!;
     public DbSet<FileLog> FileLogs { get; set; } = null!;
+    public DbSet<UserPreferences> UserPreferences { get; set; } = null!;
 
     public DesktopOrganizerDbContext(DbContextOptions<DesktopOrganizerDbContext> options)
         : base(options)

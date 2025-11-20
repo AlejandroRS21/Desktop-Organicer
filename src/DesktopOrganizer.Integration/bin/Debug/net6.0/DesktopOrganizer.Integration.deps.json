@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "DesktopOrganizer.Integration/1.0.0": {
+        "dependencies": {
+          "DesktopOrganizer.Core": "1.0.0"
+        },
+        "runtime": {
+          "DesktopOrganizer.Integration.dll": {}
+        }
+      },
+      "DesktopOrganizer.Core/1.0.0": {
+        "runtime": {
+          "DesktopOrganizer.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "DesktopOrganizer.Integration/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DesktopOrganizer.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

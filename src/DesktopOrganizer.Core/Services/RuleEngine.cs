@@ -1,16 +1,37 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DesktopOrganizer.Core.Interfaces;
+using DesktopOrganizer.Core.Models;
+using DesktopOrganizer.Core.Rules;
 
 namespace DesktopOrganizer.Core.Services;
 
 public class RuleEngine
 {
-    private readonly List<IRule> _rules;
+    private readonly List<IRule> _rules = new();
+    private readonly IRepository<Rule> _ruleRepository;
 
-    public RuleEngine(IEnumerable<IRule> rules)
+    public RuleEngine(IRepository<Rule> ruleRepository)
     {
-        _rules = rules.OrderBy(r => r.Priority).ToList();
+        _ruleRepository = ruleRepository;
+    }
+
+    public async Task LoadRulesAsync()
+    {
+        _rules.Clear();
+        var ruleEntities = await _ruleRepository.GetAllAsync();
+        
+        foreach (var entity in ruleEntities)
+        {
+            var rule = RuleFactory.CreateRule(entity);
+            if (rule != null)
+            {
+                _rules.Add(rule);
+            }
+        }
+        
+        _rules.Sort((a, b) => a.Priority.CompareTo(b.Priority));
     }
 
     public string? EvaluateFile(string filePath)

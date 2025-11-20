@@ -5,29 +5,222 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DesktopOrganizer.UI.Views"
         mc:Ignorable="d"
-        Title="Desktop Organizer" Height="450" Width="800">
-    <Grid Margin="20">
+        Title="Desktop Organizer" Height="600" Width="900"
+        Background="#F5F7FA"
+        WindowStartupLocation="CenterScreen">
+    
+    <Window.Resources>
+        <!-- Modern Button Style -->
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="#4A90E2"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#357ABD"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#2868A6"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Secondary Button Style -->
+        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Background" Value="#E8EDF3"/>
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#D1DAE6"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Card Style -->
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#E2E8F0" Direction="270" ShadowDepth="2" BlurRadius="12" Opacity="0.5"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Desktop Organizer" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+        <!-- Header -->
+        <Border Background="White" Padding="30,20">
+            <Border.Effect>
+                <DropShadowEffect Color="#E2E8F0" Direction="270" ShadowDepth="1" BlurRadius="8" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Logo/Icon -->
+                <Ellipse Width="50" Height="50" Fill="#4A90E2" Margin="0,0,15,0">
+                    <Ellipse.Effect>
+                        <DropShadowEffect Color="#4A90E2" BlurRadius="10" Opacity="0.3"/>
+                    </Ellipse.Effect>
+                </Ellipse>
+                
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="Desktop Organizer" FontSize="28" FontWeight="Bold" Foreground="#2D3748"/>
+                    <TextBlock Text="Mantén tu escritorio ordenado automáticamente" FontSize="13" Foreground="#718096" Margin="0,2,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-        <StackPanel Grid.Row="1">
-            <TextBlock Text="{Binding StatusMessage}" Margin="0,0,0,10" Foreground="Gray"/>
-            
-            <Button Content="{Binding StartStopButtonText}" 
-                    Command="{Binding ToggleMonitoringCommand}"
-                    Padding="10,5" 
-                    HorizontalAlignment="Left"/>
-        </StackPanel>
+        <!-- Main Content -->
+        <Grid Grid.Row="1" Margin="30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <StatusBar Grid.Row="2">
-            <StatusBarItem>
-                <TextBlock Text="Ready"/>
-            </StatusBarItem>
-        </StatusBar>
+            <!-- Status Card -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,20">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Status Indicator -->
+                    <Ellipse Width="12" Height="12" Margin="0,0,12,0">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Fill" Value="#48BB78"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsMonitoring}" Value="False">
+                                        <Setter Property="Fill" Value="#CBD5E0"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding StatusMessage}" FontSize="15" FontWeight="SemiBold" Foreground="#2D3748"/>
+                        <TextBlock Text="El monitoreo está activo y organizando archivos automáticamente" 
+                                   FontSize="12" Foreground="#718096" Margin="0,4,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMonitoring}" Value="False">
+                                            <Setter Property="Text" Value="Haz clic en 'Iniciar Monitoreo' para comenzar"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <!-- Main Action Button -->
+                    <Button Grid.Column="2" 
+                            Content="{Binding StartStopButtonText}"
+                            Command="{Binding ToggleMonitoringCommand}"
+                            Style="{StaticResource ModernButton}"
+                            MinWidth="160"/>
+                </Grid>
+            </Border>
+
+            <!-- Action Cards -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Manage Rules Card -->
+                <Border Style="{StaticResource Card}" Margin="0,0,10,0">
+                    <StackPanel>
+                        <Ellipse Width="48" Height="48" Fill="#E8F4FD" HorizontalAlignment="Left" Margin="0,0,0,12"/>
+                        <TextBlock Text="Gestionar Reglas" FontSize="16" FontWeight="SemiBold" Foreground="#2D3748" Margin="0,0,0,6"/>
+                        <TextBlock Text="Configura cómo organizar tus archivos" FontSize="12" Foreground="#718096" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <Button Content="Abrir Editor" 
+                                Command="{Binding OpenRuleEditorCommand}"
+                                Style="{StaticResource SecondaryButton}"
+                                HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- View Logs Card -->
+                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="5,0,5,0">
+                    <StackPanel>
+                        <Ellipse Width="48" Height="48" Fill="#FEF5E7" HorizontalAlignment="Left" Margin="0,0,0,12"/>
+                        <TextBlock Text="Ver Historial" FontSize="16" FontWeight="SemiBold" Foreground="#2D3748" Margin="0,0,0,6"/>
+                        <TextBlock Text="Revisa las operaciones realizadas" FontSize="12" Foreground="#718096" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <Button Content="Ver Logs" 
+                                Command="{Binding OpenLogsCommand}"
+                                Style="{StaticResource SecondaryButton}"
+                                HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Settings Card -->
+                <Border Grid.Column="2" Style="{StaticResource Card}" Margin="10,0,0,0">
+                    <StackPanel>
+                        <Ellipse Width="48" Height="48" Fill="#F0FDF4" HorizontalAlignment="Left" Margin="0,0,0,12"/>
+                        <TextBlock Text="Configuración" FontSize="16" FontWeight="SemiBold" Foreground="#2D3748" Margin="0,0,0,6"/>
+                        <TextBlock Text="Ajusta las carpetas monitoreadas" FontSize="12" Foreground="#718096" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <Button Content="Configurar" 
+                                Command="{Binding OpenSettingsCommand}"
+                                Style="{StaticResource SecondaryButton}"
+                                HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Info Panel -->
+            <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0,20,0,0" Background="#F7FAFC">
+                <StackPanel>
+                    <TextBlock Text="📁 Categorías Activas" FontSize="16" FontWeight="SemiBold" Foreground="#2D3748" Margin="0,0,0,12"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="• Documentos (.pdf, .doc, .txt...)" FontSize="13" Foreground="#4A5568" Margin="0,0,0,6"/>
+                            <TextBlock Text="• Imágenes (.jpg, .png, .gif...)" FontSize="13" Foreground="#4A5568" Margin="0,0,0,6"/>
+                            <TextBlock Text="• Videos (.mp4, .avi, .mkv...)" FontSize="13" Foreground="#4A5568" Margin="0,0,0,6"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="• Música (.mp3, .wav, .flac...)" FontSize="13" Foreground="#4A5568" Margin="0,0,0,6"/>
+                            <TextBlock Text="• Aplicaciones (.exe, .msi...)" FontSize="13" Foreground="#4A5568" Margin="0,0,0,6"/>
+                            <TextBlock Text="• Comprimidos (.zip, .rar, .7z...)" FontSize="13" Foreground="#4A5568" Margin="0,0,0,6"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

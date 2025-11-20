@@ -1,0 +1,65 @@
+<Window x:Class="DesktopOrganizer.UI.Views.RuleEditorView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Rule Editor" Height="450" Width="800">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Toolbar -->
+        <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,0,0,10">
+            <Button Content="Add Rule" Command="{Binding AddRuleCommand}" Padding="10,5" Margin="0,0,10,0"/>
+            <Button Content="Delete Rule" Command="{Binding DeleteRuleCommand}" Padding="10,5" Margin="0,0,10,0"/>
+            <Button Content="Refresh" Command="{Binding LoadRulesCommand}" Padding="10,5"/>
+        </StackPanel>
+
+        <!-- Rule List -->
+        <ListBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Rules}" SelectedItem="{Binding SelectedRule}" DisplayMemberPath="Name" Margin="0,0,10,0"/>
+
+        <!-- Rule Details -->
+        <Grid Grid.Row="1" Grid.Column="1" DataContext="{Binding SelectedRule}">
+            <Grid.Resources>
+                <Style TargetType="TextBox">
+                    <Setter Property="Margin" Value="0,0,0,10"/>
+                    <Setter Property="Padding" Value="5"/>
+                </Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="Margin" Value="0,0,0,5"/>
+                </Style>
+            </Grid.Resources>
+            
+            <StackPanel>
+                <TextBlock Text="Rule Name"/>
+                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Target Category"/>
+                <TextBox Text="{Binding TargetCategory, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Rule Type (ExtensionRule, NamePatternRule)"/>
+                <TextBox Text="{Binding RuleType, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Configuration (JSON)"/>
+                <TextBox Text="{Binding Configuration, UpdateSourceTrigger=PropertyChanged}" Height="100" TextWrapping="Wrap" AcceptsReturn="True"/>
+
+                <CheckBox Content="Is Active" IsChecked="{Binding IsActive}" Margin="0,10"/>
+                
+                <Button Content="Save Changes" Command="{Binding DataContext.SaveRuleCommand, RelativeSource={RelativeSource AncestorType=Window}}" HorizontalAlignment="Left" Padding="20,5"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Status Bar -->
+        <StatusBar Grid.Row="2" Grid.ColumnSpan="2">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusMessage}"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

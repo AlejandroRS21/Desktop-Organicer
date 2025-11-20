@@ -16,6 +16,11 @@ public class FileOrganizer
         _ruleEngine = ruleEngine;
     }
 
+    public async Task LoadRulesAsync()
+    {
+        await _ruleEngine.LoadRulesAsync();
+    }
+
     public async Task OrganizeFileAsync(string filePath)
     {
         if (!File.Exists(filePath)) return;
@@ -23,23 +28,42 @@ public class FileOrganizer
         var targetCategory = _ruleEngine.EvaluateFile(filePath);
         if (string.IsNullOrEmpty(targetCategory)) return;
 
-        // Logic to resolve category path would go here. 
-        // For now, assuming targetCategory is a path or we have a way to resolve it.
-        // In a full implementation, we'd inject a CategoryService/Repository to look up the path.
-        
-        // Placeholder logic for moving file
         try 
         {
-            // Simulate async work
-            await Task.Yield();
+            // Get the Desktop path
+            var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             
-            // TODO: Implement actual move logic with conflict handling
-            // var destinationPath = Path.Combine(targetCategory, Path.GetFileName(filePath));
-            // File.Move(filePath, destinationPath);
+            // Create category folder directly on Desktop
+            var destinationFolder = Path.Combine(desktopPath, targetCategory);
+            
+            if (!Directory.Exists(destinationFolder))
+            {
+                Directory.CreateDirectory(destinationFolder);
+            }
+
+            var fileName = Path.GetFileName(filePath);
+            var destinationPath = Path.Combine(destinationFolder, fileName);
+
+            // Conflict Resolution: Rename if exists
+            if (File.Exists(destinationPath))
+            {
+                string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                string extension = Path.GetExtension(fileName);
+                string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                destinationPath = Path.Combine(destinationFolder, $"{fileNameWithoutExt}_{timestamp}{extension}");
+            }
+
+            // Move the file
+            // Using Task.Run to offload IO to thread pool
+            await Task.Run(() => File.Move(filePath, destinationPath));
+            
+            // TODO: Log success
+            // _repository.AddAsync(new FileLog { ... });
         }
         catch (Exception ex)
         {
             // Log error
+            // _logger.LogError(ex, "Error organizing file {FilePath}", filePath);
             Console.WriteLine($"Error organizing file {filePath}: {ex.Message}");
         }
     }

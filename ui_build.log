@@ -1,0 +1,18 @@
+  Determinando los proyectos que se van a restaurar...
+  Todos los proyectos están actualizados para la restauración.
+  DesktopOrganizer.Core -> D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\bin\Debug\net10.0\DesktopOrganizer.Core.dll
+  DesktopOrganizer.Data -> D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Data.dll
+  DesktopOrganizer.Integration -> D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\bin\Debug\net10.0\DesktopOrganizer.Integration.dll
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\ViewModels\LogsViewModel.cs(9,30): error CS0246: El nombre del tipo o del espacio de nombres 'INotifyPropertyChanged' no se encontró (¿falta una directiva using o una referencia de ensamblado?) [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI_gttdes4w_wpftmp.csproj]
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\ViewModels\SettingsViewModel.cs(9,34): error CS0246: El nombre del tipo o del espacio de nombres 'INotifyPropertyChanged' no se encontró (¿falta una directiva using o una referencia de ensamblado?) [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI_gttdes4w_wpftmp.csproj]
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\ViewModels\RuleEditorViewModel.cs(10,36): error CS0246: El nombre del tipo o del espacio de nombres 'INotifyPropertyChanged' no se encontró (¿falta una directiva using o una referencia de ensamblado?) [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI_gttdes4w_wpftmp.csproj]
+
+ERROR al compilar.
+
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\ViewModels\LogsViewModel.cs(9,30): error CS0246: El nombre del tipo o del espacio de nombres 'INotifyPropertyChanged' no se encontró (¿falta una directiva using o una referencia de ensamblado?) [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI_gttdes4w_wpftmp.csproj]
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\ViewModels\SettingsViewModel.cs(9,34): error CS0246: El nombre del tipo o del espacio de nombres 'INotifyPropertyChanged' no se encontró (¿falta una directiva using o una referencia de ensamblado?) [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI_gttdes4w_wpftmp.csproj]
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\ViewModels\RuleEditorViewModel.cs(10,36): error CS0246: El nombre del tipo o del espacio de nombres 'INotifyPropertyChanged' no se encontró (¿falta una directiva using o una referencia de ensamblado?) [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI_gttdes4w_wpftmp.csproj]
+    0 Advertencia(s)
+    3 Errores
+
+Tiempo transcurrido 00:00:02.18
