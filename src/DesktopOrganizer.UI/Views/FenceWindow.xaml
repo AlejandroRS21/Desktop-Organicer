@@ -7,41 +7,19 @@
         Title="{Binding Title}" 
         Height="300" Width="250"
         WindowStyle="None"
-        AllowsTransparency="False"
-        Background="#CC1E293B"
-        Opacity="0.9"
+        AllowsTransparency="True"
+        Background="Transparent"
         ShowInTaskbar="False"
-        ResizeMode="CanResizeWithGrip"
+        ResizeMode="CanResize"
         AllowDrop="True"
         Drop="Window_Drop">
 
-    <Window.Resources>
-        <Style TargetType="ScrollBar">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Width" Value="8"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ScrollBar">
-                        <Grid>
-                            <Track Name="PART_Track" IsDirectionReversed="true">
-                                <Track.Thumb>
-                                    <Thumb>
-                                        <Thumb.Template>
-                                            <ControlTemplate TargetType="Thumb">
-                                                <Border Background="#40FFFFFF" CornerRadius="4"/>
-                                            </ControlTemplate>
-                                        </Thumb.Template>
-                                    </Thumb>
-                                </Track.Thumb>
-                            </Track>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="30" ResizeBorderThickness="5" GlassFrameThickness="0" CornerRadius="0"/>
+    </WindowChrome.WindowChrome>
 
-    <Border Background="Transparent" 
+    <Border CornerRadius="15" 
+            Background="#CC1E293B" 
             BorderBrush="#30FFFFFF" 
             BorderThickness="1">
         <Border.Effect>
@@ -97,7 +75,7 @@
                                         </Style.Triggers>
                                     </Style>
                                 </Border.Style>
-                                <Grid MouseLeftButtonDown="File_MouseLeftButtonDown">
+                                <Grid MouseLeftButtonDown="File_MouseLeftButtonDown" MouseMove="File_MouseMove">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*"/>
                                         <RowDefinition Height="Auto"/>

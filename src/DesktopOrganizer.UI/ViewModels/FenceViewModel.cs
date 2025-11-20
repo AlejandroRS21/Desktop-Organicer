@@ -11,7 +11,8 @@ namespace DesktopOrganizer.UI.ViewModels;
 public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
 {
     private string _title;
-    private string _folderPath;
+    private readonly string _folderPath; // This will now be the Desktop path
+    private readonly string[] _extensions; // Extensions to filter
     private FileSystemWatcher _watcher;
 
     public string Title
@@ -26,10 +27,12 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
 
     public ObservableCollection<FileItemViewModel> Files { get; } = new ObservableCollection<FileItemViewModel>();
 
-    public FenceViewModel(string title, string folderPath)
+    public FenceViewModel(string title, string folderPath, string[] extensions)
     {
         Title = title;
         _folderPath = folderPath;
+        _extensions = extensions != null ? extensions.Select(e => e.ToLower()).ToArray() : new string[0];
+        
         LoadFiles();
         SetupWatcher();
     }
@@ -38,21 +41,27 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
     {
         if (!Directory.Exists(_folderPath)) return;
 
-        // Get both files and directories
-        var entries = Directory.GetFileSystemEntries(_folderPath);
+        var files = Directory.GetFiles(_folderPath);
         
         Application.Current.Dispatcher.Invoke(() =>
         {
             Files.Clear();
-            foreach (var entry in entries)
+            foreach (var file in files)
             {
-                // Skip hidden files/folders if necessary, but for now show all
-                Files.Add(new FileItemViewModel
+                var ext = Path.GetExtension(file).ToLower();
+                
+                // Filter logic:
+                // If extensions list is empty, maybe show everything? No, that would duplicate everything.
+                // We only show if it matches our extensions.
+                if (_extensions.Contains(ext))
                 {
-                    Name = Path.GetFileName(entry),
-                    FullPath = entry,
-                    Icon = IconHelper.GetIcon(entry)
-                });
+                    Files.Add(new FileItemViewModel
+                    {
+                        Name = Path.GetFileName(file),
+                        FullPath = file,
+                        Icon = IconHelper.GetIcon(file)
+                    });
+                }
             }
         });
     }
@@ -62,6 +71,7 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
         if (!Directory.Exists(_folderPath)) return;
 
         _watcher = new FileSystemWatcher(_folderPath);
+        _watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite; // Watch for file adds/removes/renames
         _watcher.Created += (s, e) => RefreshFiles();
         _watcher.Deleted += (s, e) => RefreshFiles();
         _watcher.Renamed += (s, e) => RefreshFiles();
@@ -70,12 +80,18 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
 
     private void RefreshFiles()
     {
-        // Debounce or just reload
+        // Simple debounce could be added here if needed, but for now direct reload
         Application.Current.Dispatcher.Invoke(() => LoadFiles());
     }
 
     public void AddFiles(string[] files)
     {
+        // When dropping files onto this fence:
+        // 1. If the file is NOT on the desktop, move it to the desktop.
+        // 2. If it IS on the desktop, do nothing (it's already there).
+        // 3. Ideally, we should check if the file extension matches this fence. If not, maybe warn? 
+        //    But for now, let's just move it to Desktop.
+
         foreach (var file in files)
         {
             if (!File.Exists(file) && !Directory.Exists(file)) continue;
@@ -83,7 +99,13 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
             try
             {
                 var fileName = Path.GetFileName(file);
-                var destPath = Path.Combine(_folderPath, fileName);
+                var destPath = Path.Combine(_folderPath, fileName); // _folderPath is Desktop
+
+                // Check if source and dest are same
+                if (string.Equals(file, destPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue; // Already on desktop
+                }
 
                 // Handle duplicate names
                 if (File.Exists(destPath) || Directory.Exists(destPath))
@@ -105,11 +127,10 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
             }
             catch (Exception ex)
             {
-                // Log or show error?
                 Console.WriteLine($"Error moving file: {ex.Message}");
             }
         }
-        // Refresh will happen automatically via FileSystemWatcher
+        // Watcher will trigger refresh
     }
 
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;

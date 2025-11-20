@@ -23,29 +23,26 @@ public class FenceManager
 
         var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
-        // Define known categories
-        var knownCategories = new[] { "Documentos", "Imagenes", "Videos", "Musica", "Aplicaciones", "Comprimidos" };
+        // Define categories and their extensions
+        var categories = new Dictionary<string, string[]>
+        {
+            { "Documentos", new[] { ".pdf", ".doc", ".docx", ".txt", ".xls", ".xlsx", ".ppt", ".pptx", ".odt" } },
+            { "Imagenes", new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".ico" } },
+            { "Videos", new[] { ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv" } },
+            { "Musica", new[] { ".mp3", ".wav", ".flac", ".aac", ".ogg" } },
+            { "Aplicaciones", new[] { ".exe", ".lnk", ".msi" } },
+            { "Comprimidos", new[] { ".zip", ".rar", ".7z", ".tar", ".gz" } }
+        };
 
         // Position logic
         double startX = SystemParameters.WorkArea.Width - 300; // Start from right side
         double startY = 50;
         double offset = 320; // Height + margin
 
-        foreach (var category in knownCategories)
+        foreach (var category in categories)
         {
-            var dirPath = Path.Combine(desktopPath, category);
-            
-            // Ensure directory exists so the fence can be created
-            if (!Directory.Exists(dirPath))
-            {
-                try 
-                {
-                    Directory.CreateDirectory(dirPath);
-                }
-                catch { continue; } // Skip if permission denied
-            }
-
-            CreateFence(category, dirPath, startX, startY);
+            // Create fence watching Desktop but filtering by extensions
+            CreateFence(category.Key, desktopPath, category.Value, startX, startY);
             
             startY += offset;
             
@@ -58,15 +55,12 @@ public class FenceManager
         }
     }
 
-    private void CreateFence(string title, string path, double left, double top)
+    private void CreateFence(string title, string path, string[] extensions, double left, double top)
     {
-        var vm = new FenceViewModel(title, path);
-        var window = new FenceWindow(vm)
-        {
-            Left = left,
-            Top = top
-        };
-        
+        var viewModel = new FenceViewModel(title, path, extensions);
+        var window = new FenceWindow(viewModel);
+        window.Left = left;
+        window.Top = top;
         window.Show();
         _openFences.Add(window);
         

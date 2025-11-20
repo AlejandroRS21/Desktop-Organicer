@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DesktopOrganizer.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+010253bf7f51dccb77b6fcd46e12e5874fdb31e2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5b1b91d94833b4cea45cfaf3622681cdd47cc752")]
 [assembly: System.Reflection.AssemblyProductAttribute("DesktopOrganizer.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DesktopOrganizer.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

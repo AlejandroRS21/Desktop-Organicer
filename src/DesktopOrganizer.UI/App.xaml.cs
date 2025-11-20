@@ -186,6 +186,10 @@ public partial class App : Application
             var fenceManager = _serviceProvider.GetRequiredService<DesktopOrganizer.UI.Services.FenceManager>();
             fenceManager.InitializeFences();
 
+            // Start File Watcher Service (DISABLED for Virtual Fences mode)
+            // var fileWatcherService = _serviceProvider.GetRequiredService<IFileWatcher>();
+            // fileWatcherService.Start();
+
             var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
         }

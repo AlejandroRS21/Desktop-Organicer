@@ -32,61 +32,58 @@ public static class DesktopWindowHelper
     const uint SWP_NOMOVE = 0x0002;
     const uint SWP_NOACTIVATE = 0x0010;
 
-    public static void SetToDesktop(Window window)
+    public static bool SetToDesktop(Window window)
     {
         var handle = new WindowInteropHelper(window).Handle;
         var workerW = GetWorkerW();
         
         if (workerW != IntPtr.Zero)
         {
-            SetParent(handle, workerW);
+            IntPtr result = SetParent(handle, workerW);
+            return result != IntPtr.Zero;
         }
-        else
+        
+        // Fallback to Progman
+        IntPtr progman = FindWindow("Progman", null);
+        if (progman != IntPtr.Zero)
         {
-            // Fallback: Send to bottom if WorkerW not found
-            SetWindowPos(handle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            IntPtr result = SetParent(handle, progman);
+            return result != IntPtr.Zero;
         }
+
+        return false;
     }
 
     private static IntPtr GetWorkerW()
     {
-        // Fetch the Progman window
         IntPtr progman = FindWindow("Progman", null);
-
-        // Send 0x052C to Progman. This message spawns a WorkerW behind the desktop icons.
-        // If it is already there, nothing happens.
         IntPtr result = IntPtr.Zero;
+        
+        // Spawn WorkerW
         SendMessageTimeout(progman, 0x052C, new IntPtr(0), IntPtr.Zero, 0x0000, 1000, out result);
 
         IntPtr workerW = IntPtr.Zero;
 
-        // We enumerate all Windows to find the one with SHELLDLL_DefView
         EnumWindows(new EnumWindowsProc((tophandle, topparamhandle) =>
         {
             IntPtr p = FindWindowEx(tophandle, IntPtr.Zero, "SHELLDLL_DefView", null);
 
             if (p != IntPtr.Zero)
             {
-                // Gets the WorkerW Window after the current one.
+                // Found the window with SHELLDLL_DefView. 
+                // The WorkerW we want is the NEXT sibling in the Z-order.
                 workerW = FindWindowEx(IntPtr.Zero, tophandle, "WorkerW", null);
             }
 
             return true;
         }), IntPtr.Zero);
-        
-        // Fallback: If we didn't find it (sometimes happens on Win11), try to find the WorkerW that is NOT the one with SHELLDLL_DefView
-        if (workerW == IntPtr.Zero)
-        {
-             EnumWindows(new EnumWindowsProc((tophandle, topparamhandle) =>
-             {
-                 // Look for WorkerW
-                 // This is a bit hacky: usually the WorkerW that is the desktop background is the one that is visible
-                 // and has no SHELLDLL_DefView child.
-                 // But let's stick to the standard method first.
-                 return true;
-             }), IntPtr.Zero);
-        }
 
         return workerW;
+    }
+
+    public static void SendToBottom(Window window)
+    {
+        var handle = new WindowInteropHelper(window).Handle;
+        SetWindowPos(handle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     }
 }
