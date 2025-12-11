@@ -90,3 +90,4 @@ D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\DesktopO.D5AE27DF.Up2Date
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\DesktopOrganizer.UI.genruntimeconfig.cache
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\ref\DesktopOrganizer.UI.dll
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\DesktopOrganizer.UI.sourcelink.json
