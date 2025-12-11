@@ -13,6 +13,7 @@
         ShowInTaskbar="False"
         ResizeMode="NoResize"
         AllowDrop="True"
+        DragOver="Window_DragOver"
         Drop="Window_Drop">
 
     <!-- Context Menu -->
