@@ -171,6 +171,7 @@
                          ItemsSource="{Binding Files}"
                          Background="Transparent" 
                          BorderThickness="0"
+                         AllowDrop="True"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ScrollViewer.VerticalScrollBarVisibility="Auto"
                          SelectionMode="Extended"
@@ -232,6 +233,7 @@
                                         <MenuItem Header="Copiar" Command="{Binding DataContext.CopyCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}">
                                             <MenuItem.Icon><TextBlock Text="📋"/></MenuItem.Icon>
                                         </MenuItem>
+                                        <MenuItem Header="🚫 Quitar del Fence" Command="{Binding DataContext.ExcludeCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
                                         <MenuItem Header="Eliminar" Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" Foreground="#DC2626">
                                             <MenuItem.Icon><TextBlock Text="🗑️"/></MenuItem.Icon>
                                         </MenuItem>

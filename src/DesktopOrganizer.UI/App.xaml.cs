@@ -159,11 +159,9 @@ public partial class App : Application
                 
                 try
                 {
-                    // Force a query that uses the new column in the SQL WHERE clause
-                    // This triggers "no such column" error even if table is empty
-                    var validSchema = context.UserPreferences
-                        .Where(u => u.EnableFenceBlur == true || u.FenceOpacity > 0)
-                        .Any();
+                    // Force a raw SQL query to check for column existence.
+                    // This is more reliable than LINQ for schema validation on empty tables.
+                    context.Database.ExecuteSqlRaw("SELECT ExcludedFiles FROM Fences LIMIT 1");
                 }
                 catch
                 {

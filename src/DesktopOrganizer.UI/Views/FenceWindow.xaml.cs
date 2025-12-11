@@ -35,6 +35,53 @@ public partial class FenceWindow : Window
         _expandedHeight = this.Height;
     }
 
+    private void WriteDebug(string msg)
+    {
+        try 
+        {
+            var path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "fences_drag_debug.txt");
+            System.IO.File.AppendAllText(path, $"{DateTime.Now.ToString("HH:mm:ss.fff")}: {msg}\n");
+        }
+        catch {}
+    }
+
+    private void Window_DragOver(object sender, DragEventArgs e)
+    {
+        // WriteDebug($"DragOver. Formats: {String.Join(", ", e.Data.GetFormats())}");
+        if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
+            e.Effects = DragDropEffects.Copy | DragDropEffects.Move;
+            e.Handled = true;
+        }
+        else
+        {
+            e.Effects = DragDropEffects.None;
+            e.Handled = true;
+        }
+    }
+
+    private void Window_Drop(object sender, DragEventArgs e)
+    {
+        WriteDebug("Window_Drop event fired!");
+        if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
+            string[]? files = e.Data.GetData(DataFormats.FileDrop) as string[];
+            if (files != null && files.Length > 0)
+            {
+                WriteDebug($"Dropping {files.Length} files: {files[0]}...");
+                _viewModel.AddFiles(files);
+            }
+            else
+            {
+                WriteDebug("FileDrop present but files array is null/empty");
+            }
+        }
+        else
+        {
+            WriteDebug("No FileDrop data found");
+        }
+    }
+
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
@@ -201,31 +248,7 @@ public partial class FenceWindow : Window
     
     #endregion
 
-    private void Window_DragOver(object sender, DragEventArgs e)
-    {
-        if (e.Data.GetDataPresent(DataFormats.FileDrop))
-        {
-            e.Effects = DragDropEffects.Copy | DragDropEffects.Move;
-            e.Handled = true;
-        }
-        else
-        {
-            e.Effects = DragDropEffects.None;
-            e.Handled = true;
-        }
-    }
 
-    private void Window_Drop(object sender, DragEventArgs e)
-    {
-        if (e.Data.GetDataPresent(DataFormats.FileDrop))
-        {
-            string[]? files = e.Data.GetData(DataFormats.FileDrop) as string[];
-            if (files != null && files.Length > 0)
-            {
-                _viewModel.AddFiles(files);
-            }
-        }
-    }
 
     private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {

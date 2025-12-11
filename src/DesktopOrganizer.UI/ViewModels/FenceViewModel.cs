@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -62,11 +63,16 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
     public bool HasFiles => Files.Count > 0;
     public bool IsEmpty => Files.Count == 0;
 
-    public FenceViewModel(string title, string folderPath, string[] extensions)
+    private readonly HashSet<string> _includedFiles;
+    private readonly HashSet<string> _excludedFiles;
+
+    public FenceViewModel(string title, string folderPath, string[] extensions, IEnumerable<string> includedFiles, IEnumerable<string> excludedFiles)
     {
         Title = title;
         _folderPath = folderPath;
         _extensions = extensions != null ? extensions.Select(e => e.ToLower()).ToArray() : new string[0];
+        _includedFiles = new HashSet<string>(includedFiles ?? Enumerable.Empty<string>(), StringComparer.OrdinalIgnoreCase);
+        _excludedFiles = new HashSet<string>(excludedFiles ?? Enumerable.Empty<string>(), StringComparer.OrdinalIgnoreCase);
         
         LoadFiles();
         SetupWatcher();
@@ -83,16 +89,40 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
             Files.Clear();
             foreach (var file in files)
             {
+                var fileName = Path.GetFileName(file);
                 var ext = Path.GetExtension(file).ToLower();
+
+                // 1. Check Exclusion (Priority High)
+                if (_excludedFiles.Contains(fileName)) continue;
+
+                // 2. Check Inclusion (Priority Medium)
+                bool isIncluded = _includedFiles.Contains(fileName);
+
+                // 3. Check Extension Rules (Priority Low)
+                bool matchesRule = _extensions.Contains(ext);
+
+                // 4. Default Acceptance (Folders always accepted if not excluded? Or need rule?)
+                // Assuming folders follow visual rules or inclusion.
+                // For now, let's say Folders are accepted if not excluded?
+                // Or stick to extension logic? Folders have no extension.
+                // If ext is missing, user must include specificly? Or we allow folders?
+                // Previous logic allowed folders implicitly via AddFiles. Let's show them.
+                bool isDir = Directory.Exists(file); // Directory.GetFiles doesn't return dirs?
+                // Wait, Directory.GetFiles returns FILES. GetFileSystemEntries returns both.
+                // We typically only support files unless we changed that.
+                // Actually `Directory.GetFiles` returns only files. So `isDir` is always false here?
+                // If we want to support folders showing up inside fences, we need `GetFileSystemEntries`.
+                // But `AddFiles` handles folders...
+                // If `AddFiles` moves a folder, it stays on Desktop.
+                // But `LoadFiles` won't pick it up if we use `GetFiles`.
+                // I will NOT change `GetFiles` to `GetFileSystemEntries` right now to reduce scope,
+                // treating this strictly as FILE organization.
                 
-                // Filter logic:
-                // If extensions list is empty, maybe show everything? No, that would duplicate everything.
-                // We only show if it matches our extensions.
-                if (_extensions.Contains(ext))
+                if (isIncluded || matchesRule)
                 {
                     Files.Add(new FileItemViewModel
                     {
-                        Name = Path.GetFileName(file),
+                        Name = fileName,
                         FullPath = file,
                         Icon = IconHelper.GetIcon(file)
                     });
@@ -125,6 +155,8 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
 
     // Event to request rule update (Id, Extension)
     public event Action<int, string>? RequestRuleUpdate;
+    public event Action<int, string>? RequestInclusionUpdate; // Add specific file
+    public event Action<int, string>? RequestExclusionUpdate; // Exclude specific file
     public int Id { get; set; }
 
     public void AddFiles(string[] files)
@@ -143,35 +175,68 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
                 var fileName = Path.GetFileName(file);
                 var destPath = Path.Combine(_folderPath, fileName); // _folderPath is Desktop
                 var ext = Path.GetExtension(file).ToLower();
+                bool isDir = Directory.Exists(file);
 
-                // 1. Check extension match FIRST
-                // We do this check regardless of whether it moved or was already there.
-                if (_extensions.Length > 0 && !_extensions.Contains(ext) && !string.IsNullOrEmpty(ext))
+                // 1. Check Exclusion
+                if (_excludedFiles.Contains(fileName))
                 {
-                    // Prompt user
-                    var result = System.Windows.MessageBox.Show(
-                        $"El archivo '{fileName}' ({ext}) no pertenece a este fence.\n¿Quieres añadir '{ext}' a las reglas?", 
-                        "Actualizar Reglas", 
+                    // It's explicitly excluded.
+                    // If user drops it here, they probably want to Include it now.
+                    // We should ask if they want to force include (override exclusion).
+                     var res = System.Windows.MessageBox.Show(
+                        $"El archivo '{fileName}' está excluido de este fence.\n¿Quieres incluirlo?", 
+                        "Inclusión Manual", 
                         System.Windows.MessageBoxButton.YesNo, 
+                        System.Windows.MessageBoxImage.Question);
+                     if (res == System.Windows.MessageBoxResult.Yes)
+                     {
+                         RequestInclusionUpdate?.Invoke(Id, fileName);
+                         // Fall through to Move logic
+                     }
+                     else
+                     {
+                         continue;
+                     }
+                }
+
+                // 2. Check Match (Inclusion OR Rule)
+                bool isIncluded = _includedFiles.Contains(fileName);
+                bool matchesRule = !string.IsNullOrEmpty(ext) && _extensions.Contains(ext);
+                
+                if (!isDir && !isIncluded && !matchesRule)
+                {
+                    // Prompt user: Rule or Specific?
+                    var result = System.Windows.MessageBox.Show(
+                        $"El archivo '{fileName}' ({ext}) no coincide con las reglas.\n\n" +
+                        "SÍ: Añadir regla para todos los " + ext + "\n" +
+                        "NO: Añadir SOLO este archivo", 
+                        "Añadir Archivo", 
+                        System.Windows.MessageBoxButton.YesNoCancel, 
                         System.Windows.MessageBoxImage.Question);
                         
                     if (result == System.Windows.MessageBoxResult.Yes)
                     {
+                         // Add Rule
                         RequestRuleUpdate?.Invoke(Id, ext);
-                        // Return/Continue because the window will reload
-                        continue; 
+                        // Fall through to move
+                    }
+                    else if (result == System.Windows.MessageBoxResult.No)
+                    {
+                        // Add Specific File
+                        RequestInclusionUpdate?.Invoke(Id, fileName);
+                        // Fall through to move
                     }
                     else
                     {
-                        // User said No, so we skip this file
+                        // Cancel
                         continue;
                     }
                 }
 
-                // 2. Check if source and dest are same
+                // 3. Move Logic
                 if (string.Equals(file, destPath, StringComparison.OrdinalIgnoreCase))
                 {
-                    continue; // Already on desktop, and rules are fine
+                    continue; 
                 }
 
                 // Handle duplicate names
@@ -183,7 +248,7 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
                     destPath = Path.Combine(_folderPath, $"{nameWithoutExt}_{timestamp}{ext}");
                 }
 
-                if (Directory.Exists(file))
+                if (Directory.Exists(file)) // Check source original path
                 {
                     Directory.Move(file, destPath);
                 }
@@ -195,6 +260,7 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
             catch (Exception ex)
             {
                 Console.WriteLine($"Error moving file: {ex.Message}");
+                // System.Windows.MessageBox.Show($"Error moving: {ex.Message}"); // Optional
             }
         }
         // Watcher will trigger refresh
@@ -255,6 +321,23 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
                 {
                     System.Windows.MessageBox.Show($"Error al eliminar: {ex.Message}");
                 }
+            }
+        }
+    });
+
+    public System.Windows.Input.ICommand ExcludeCommand => new RelayCommand(param => 
+    {
+        if (param is FileItemViewModel file)
+        {
+            var result = System.Windows.MessageBox.Show(
+                $"¿Quitar '{file.Name}' de este fence?\nEl archivo aparecerá en el escritorio.",
+                "Quitar del Fence",
+                System.Windows.MessageBoxButton.YesNo,
+                System.Windows.MessageBoxImage.Question);
+            
+            if (result == System.Windows.MessageBoxResult.Yes)
+            {
+                RequestExclusionUpdate?.Invoke(Id, file.Name);
             }
         }
     });

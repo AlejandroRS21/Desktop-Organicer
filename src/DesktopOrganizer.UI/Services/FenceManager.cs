@@ -321,7 +321,10 @@ public class FenceManager
 
     private void CreateFenceFromConfig(FenceConfiguration config, string path, UserPreferences prefs, string[] extensions)
     {
-        var viewModel = new FenceViewModel(config.Name, path, extensions);
+        var included = (config.IncludedFiles ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+        var excluded = (config.ExcludedFiles ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+
+        var viewModel = new FenceViewModel(config.Name, path, extensions, included, excluded);
         viewModel.HexColor = prefs.FenceColorHex;
         viewModel.Opacity = prefs.FenceOpacity;
         
@@ -349,12 +352,47 @@ public class FenceManager
                     var fence = db.Fences.Find(id);
                     if (fence != null)
                     {
-                        // Check if extension exists (should check case insensitive split)
-                        var existing = fence.Extensions.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim().ToLower());
-                        if (!existing.Contains(ext.ToLower()))
+                        string newExt = ext.ToLower();
+                        
+                        // 1. Remove this extension from ANY other fence (Exclusive Rules)
+                        var allFences = db.Fences.ToList(); // Fetch all to check
+                        foreach (var otherFence in allFences)
                         {
-                            fence.Extensions = fence.Extensions + ";" + ext;
-                            db.SaveChanges();
+                            if (otherFence.Id == id) continue; // Skip current
+                            
+                            var extStr = otherFence.Extensions ?? string.Empty;
+                            var otherExts = extStr.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+                            
+                            if (otherExts.Any(e => e.Equals(newExt, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                // Remove it
+                                var updatedExts = otherExts.Where(e => !e.Equals(newExt, StringComparison.OrdinalIgnoreCase));
+                                otherFence.Extensions = string.Join(";", updatedExts);
+                                
+                                // Update DB (Tracked automatically)
+                                
+                                // Update UI for other fence
+                                // We need to do this on Dispatcher, preventing cross-thread issues if multiple
+                                // We'll collect IDs to update
+                                int otherId = otherFence.Id;
+                                string otherExtStr = otherFence.Extensions;
+                                Application.Current.Dispatcher.Invoke(() => 
+                                {
+                                    UpdateFenceRules(otherId, otherExtStr);
+                                });
+                            }
+                        }
+
+                        // 2. Add to current fence
+                        // Check if extension exists (should check case insensitive split)
+                        var currentExtStr = fence.Extensions ?? string.Empty;
+                        var existing = currentExtStr.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim().ToLower());
+                        if (!existing.Contains(newExt))
+                        {
+                            fence.Extensions = (string.IsNullOrEmpty(currentExtStr) ? "" : currentExtStr + ";") + ext;
+                            // db.SaveChanges(); // Will be saved at end of scope? 
+                            // We need to save changes for both the other fences and this one.
+                            db.SaveChanges(); 
                             
                             // Reload fence on UI thread
                             Application.Current.Dispatcher.Invoke(() => 
@@ -368,6 +406,126 @@ public class FenceManager
             catch (Exception ex)
             {
                 MessageBox.Show($"Error actualizando regla: {ex.Message}");
+            }
+        };
+
+        viewModel.RequestInclusionUpdate += (id, fileName) =>
+        {
+            try
+            {
+                 using (var scope = _scopeFactory.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+                    var fence = db.Fences.Find(id);
+                    if (fence != null)
+                    {
+                        string targetFile = fileName.Trim();
+                        string ext = Path.GetExtension(targetFile).ToLower();
+
+                        // 1. Add to Current Fence Included List
+                        var currentInc = (fence.IncludedFiles ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+                        if (!currentInc.Contains(targetFile, StringComparer.OrdinalIgnoreCase))
+                        {
+                            currentInc.Add(targetFile);
+                            fence.IncludedFiles = string.Join(";", currentInc);
+                        }
+                        
+                        // Remove from Excluded if present
+                        var currentExc = (fence.ExcludedFiles ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+                        if (currentExc.RemoveAll(x => x.Equals(targetFile, StringComparison.OrdinalIgnoreCase)) > 0)
+                        {
+                             fence.ExcludedFiles = string.Join(";", currentExc);
+                        }
+
+                        // 2. Handle Other Fences (Steal / Exclude)
+                        var allFences = db.Fences.ToList();
+                        foreach (var other in allFences)
+                        {
+                            if (other.Id == id) continue;
+
+                            bool changed = false;
+
+                            // A. Steal from Included
+                            var otherInc = (other.IncludedFiles ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+                            if (otherInc.RemoveAll(x => x.Equals(targetFile, StringComparison.OrdinalIgnoreCase)) > 0)
+                            {
+                                other.IncludedFiles = string.Join(";", otherInc);
+                                changed = true;
+                            }
+
+                            // B. Add to Excluded IF rule matches
+                            // Only necessary if the other fence has a matching Rule (*.ext)
+                            var otherRules = (other.Extensions ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim().ToLower());
+                            if (otherRules.Contains(ext))
+                            {
+                                var otherExc = (other.ExcludedFiles ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+                                if (!otherExc.Contains(targetFile, StringComparer.OrdinalIgnoreCase))
+                                {
+                                    otherExc.Add(targetFile);
+                                    other.ExcludedFiles = string.Join(";", otherExc);
+                                    changed = true;
+                                }
+                            }
+
+                            if (changed)
+                            {
+                                // Refresh UI for other fence
+                                int oid = other.Id;
+                                string oExt = other.Extensions; 
+                                Application.Current.Dispatcher.Invoke(() => UpdateFenceRules(oid, oExt));
+                            }
+                        }
+
+                        db.SaveChanges();
+                        
+                        // Refresh Current UI
+                        Application.Current.Dispatcher.Invoke(() => UpdateFenceRules(id, fence.Extensions));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                 MessageBox.Show($"Error actualizando inclusión: {ex.Message}");
+            }
+        };
+
+        viewModel.RequestExclusionUpdate += (id, fileName) =>
+        {
+            try
+            {
+                 using (var scope = _scopeFactory.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+                    var fence = db.Fences.Find(id);
+                    if (fence != null)
+                    {
+                        string targetFile = fileName.Trim();
+                        
+                        // 1. Remove from Included (Clean up)
+                        var currentInc = (fence.IncludedFiles ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+                        if (currentInc.RemoveAll(x => x.Equals(targetFile, StringComparison.OrdinalIgnoreCase)) > 0)
+                        {
+                            fence.IncludedFiles = string.Join(";", currentInc);
+                        }
+
+                        // 2. Add to Excluded 
+                        var currentExc = (fence.ExcludedFiles ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+                        if (!currentExc.Contains(targetFile, StringComparer.OrdinalIgnoreCase))
+                        {
+                            currentExc.Add(targetFile);
+                            fence.ExcludedFiles = string.Join(";", currentExc);
+                        }
+
+                        db.SaveChanges();
+                        
+                        // Refresh Current UI
+                        Application.Current.Dispatcher.Invoke(() => UpdateFenceRules(id, fence.Extensions));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                 MessageBox.Show($"Error excluyendo archivo: {ex.Message}");
             }
         };
 
@@ -698,5 +856,19 @@ public class FenceManager
             }
             FencesUpdated?.Invoke();
         }
+    }
+    public void UpdateFenceAppearance(string hexColor, double opacity)
+    {
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            foreach (var window in _openFences)
+            {
+                if (window.DataContext is FenceViewModel vm)
+                {
+                    vm.HexColor = hexColor;
+                    vm.Opacity = opacity;
+                }
+            }
+        });
     }
 }

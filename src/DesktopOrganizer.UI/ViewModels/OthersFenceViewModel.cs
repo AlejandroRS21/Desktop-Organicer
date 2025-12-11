@@ -15,7 +15,7 @@ public class OthersFenceViewModel : FenceViewModel
     private readonly HashSet<string> _excludeExtensions;
 
     public OthersFenceViewModel(string title, string folderPath, HashSet<string> excludeExtensions) 
-        : base(title, folderPath, Array.Empty<string>())
+        : base(title, folderPath, Array.Empty<string>(), null, null)
     {
         _excludeExtensions = excludeExtensions;
         LoadOtherFiles();

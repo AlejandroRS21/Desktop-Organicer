@@ -35,6 +35,7 @@ public class SettingsViewModel : INotifyPropertyChanged
             {
                 _preferences.FenceOpacity = value;
                 OnPropertyChanged();
+                _fenceManager.UpdateFenceAppearance(_preferences.FenceColorHex, value);
             }
         }
     }
@@ -48,6 +49,7 @@ public class SettingsViewModel : INotifyPropertyChanged
             {
                 _preferences.FenceColorHex = value;
                 OnPropertyChanged();
+                _fenceManager.UpdateFenceAppearance(value, _preferences.FenceOpacity);
             }
         }
     }
