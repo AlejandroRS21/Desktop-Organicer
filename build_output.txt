@@ -1,0 +1,174 @@
+﻿Compilaci├│n iniciada a las 09/12/2025 9:57:22.
+     1>Proyecto "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" en el nodo 1 (Restore destinos).
+     1>_GetAllRestoreProjectPathItems:
+         Determinando los proyectos que se van a restaurar...
+     1>El proyecto "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" (1) est├í compilando "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\DesktopOrganizer.Integration.csproj" (3:4) en el nodo 2 (_GenerateProjectRestoreGraph destinos).
+     3>AddPrunePackageReferences:
+         Loading prune package data from PrunePackageData folder
+         Failed to load prune package data from PrunePackageData folder, loading from targeting packs instead
+         Looking for targeting packs in C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref
+     1>El proyecto "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" (1) est├í compilando "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\DesktopOrganizer.Data.csproj" (4:4) en el nodo 3 (_GenerateProjectRestoreGraph destinos).
+     4>AddPrunePackageReferences:
+         Loading prune package data from PrunePackageData folder
+         Failed to load prune package data from PrunePackageData folder, loading from targeting packs instead
+         Looking for targeting packs in C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref
+     3>AddPrunePackageReferences:
+         Pack directories found: C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\10.0.0
+     4>AddPrunePackageReferences:
+         Pack directories found: C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\10.0.0
+     3>AddPrunePackageReferences:
+         Found package overrides file C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\10.0.0\data\PackageOverrides.txt
+     4>AddPrunePackageReferences:
+         Found package overrides file C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\10.0.0\data\PackageOverrides.txt
+     1>El proyecto "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" (1) est├í compilando "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\DesktopOrganizer.Core.csproj" (2:6) en el nodo 1 (_GenerateProjectRestoreGraph destinos).
+     2>AddPrunePackageReferences:
+         Loading prune package data from PrunePackageData folder
+         Failed to load prune package data from PrunePackageData folder, loading from targeting packs instead
+         Looking for targeting packs in C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref
+         Pack directories found: C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\10.0.0
+     3>Compilaci├│n del proyecto terminada "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\DesktopOrganizer.Integration.csproj" (_GenerateProjectRestoreGraph destinos).
+     4>Compilaci├│n del proyecto terminada "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\DesktopOrganizer.Data.csproj" (_GenerateProjectRestoreGraph destinos).
+     2>AddPrunePackageReferences:
+         Found package overrides file C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\10.0.0\data\PackageOverrides.txt
+     2>Compilaci├│n del proyecto terminada "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\DesktopOrganizer.Core.csproj" (_GenerateProjectRestoreGraph destinos).
+     1>El proyecto "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" (1) est├í compilando "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" (1:6) en el nodo 1 (_GenerateProjectRestoreGraph destinos).
+     1>AddPrunePackageReferences:
+         Loading prune package data from PrunePackageData folder
+         Failed to load prune package data from PrunePackageData folder, loading from targeting packs instead
+         Looking for targeting packs in C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref
+         Pack directories found: C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\10.0.0
+         Found package overrides file C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\10.0.0\data\PackageOverrides.txt
+         Loading prune package data from PrunePackageData folder
+         Failed to load prune package data from PrunePackageData folder, loading from targeting packs instead
+         Looking for targeting packs in C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref
+         Pack directories found: C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\10.0.0
+         Found package overrides file C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\10.0.0\data\PackageOverrides.txt
+     1>Compilaci├│n del proyecto terminada "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" (_GenerateProjectRestoreGraph destinos).
+     1>Restore:
+         La validaci├│n de la cadena de certificados X.509 utilizar├í el almac├®n de confianza predeterminado seleccionado por .NET para la firma de c├│digo.
+         La validaci├│n de la cadena de certificados X.509 utilizar├í el almac├®n de confianza predeterminado seleccionado por .NET para la marca de tiempo.
+         El archivo de recursos no ha cambiado, as├¡ que se omitir├í su escritura. Ruta de acceso: D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\obj\project.assets.json
+         El archivo de recursos no ha cambiado, as├¡ que se omitir├í su escritura. Ruta de acceso: D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\obj\project.assets.json
+         El archivo de recursos no ha cambiado, as├¡ que se omitir├í su escritura. Ruta de acceso: D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\project.assets.json
+         El archivo de recursos no ha cambiado, as├¡ que se omitir├í su escritura. Ruta de acceso: D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\project.assets.json
+         Se ha restaurado D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\DesktopOrganizer.Data.csproj (en 75 ms).
+         Se ha restaurado D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\DesktopOrganizer.Integration.csproj (en 71 ms).
+         Se ha restaurado D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj (en 73 ms).
+         Se ha restaurado D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\DesktopOrganizer.Core.csproj (en 71 ms).
+         
+         Archivos de NuGet Config usados:
+             C:\Users\arami Win\AppData\Roaming\NuGet\NuGet.Config
+         
+         Fuentes usadas:
+             https://api.nuget.org/v3/index.json
+         Todos los proyectos est├ín actualizados para la restauraci├│n.
+     1>Compilaci├│n del proyecto terminada "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" (Restore destinos).
+   1:7>Proyecto "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" en nodo 3 (destinos predeterminados).
+   1:7>El proyecto "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" (1:7) est├í compilando "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\DesktopOrganizer.Core.csproj" (2:8) en el nodo 2 (destinos predeterminados).
+     2>GenerateTargetFrameworkMonikerAttribute:
+       Se omitir├í el destino "GenerateTargetFrameworkMonikerAttribute" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       CoreGenerateAssemblyInfo:
+       Se omitir├í el destino "CoreGenerateAssemblyInfo" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       _GenerateSourceLinkFile:
+         El v├¡nculo de origen est├í vac├¡o, el archivo 'obj\Debug\net10.0\DesktopOrganizer.Core.sourcelink.json' no existe.
+       CoreCompile:
+       Se omitir├í el destino "CoreCompile" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       GenerateBuildDependencyFile:
+       Se omitir├í el destino "GenerateBuildDependencyFile" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       CopyFilesToOutputDirectory:
+         DesktopOrganizer.Core -> D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\bin\Debug\net10.0\DesktopOrganizer.Core.dll
+     2>Compilaci├│n del proyecto terminada "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\DesktopOrganizer.Core.csproj" (destinos predeterminados).
+   1:7>El proyecto "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" (1:7) est├í compilando "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\DesktopOrganizer.Integration.csproj" (3:6) en el nodo 1 (destinos predeterminados).
+     3>GenerateTargetFrameworkMonikerAttribute:
+       Se omitir├í el destino "GenerateTargetFrameworkMonikerAttribute" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+   1:7>El proyecto "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" (1:7) est├í compilando "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\DesktopOrganizer.Data.csproj" (4:6) en el nodo 3 (destinos predeterminados).
+     4>GenerateTargetFrameworkMonikerAttribute:
+       Se omitir├í el destino "GenerateTargetFrameworkMonikerAttribute" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       CoreGenerateAssemblyInfo:
+       Se omitir├í el destino "CoreGenerateAssemblyInfo" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       _GenerateSourceLinkFile:
+         El v├¡nculo de origen est├í vac├¡o, el archivo 'obj\Debug\net10.0\DesktopOrganizer.Data.sourcelink.json' no existe.
+       CoreCompile:
+       Se omitir├í el destino "CoreCompile" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       GenerateBuildDependencyFile:
+       Se omitir├í el destino "GenerateBuildDependencyFile" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       GenerateBuildRuntimeConfigurationFiles:
+       Se omitir├í el destino "GenerateBuildRuntimeConfigurationFiles" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       CopyFilesToOutputDirectory:
+         DesktopOrganizer.Data -> D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Data.dll
+     4>Compilaci├│n del proyecto terminada "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\DesktopOrganizer.Data.csproj" (destinos predeterminados).
+     3>CoreGenerateAssemblyInfo:
+       Se omitir├í el destino "CoreGenerateAssemblyInfo" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       _GenerateSourceLinkFile:
+         El v├¡nculo de origen est├í vac├¡o, el archivo 'obj\Debug\net10.0\DesktopOrganizer.Integration.sourcelink.json' no existe.
+       CoreCompile:
+       Se omitir├í el destino "CoreCompile" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       GenerateBuildDependencyFile:
+       Se omitir├í el destino "GenerateBuildDependencyFile" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       CopyFilesToOutputDirectory:
+         DesktopOrganizer.Integration -> D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\bin\Debug\net10.0\DesktopOrganizer.Integration.dll
+     3>Compilaci├│n del proyecto terminada "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\DesktopOrganizer.Integration.csproj" (destinos predeterminados).
+     1>MainResourcesGeneration:
+       Se omitir├í el destino "MainResourcesGeneration" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       GenerateTargetFrameworkMonikerAttribute:
+       Se omitir├í el destino "GenerateTargetFrameworkMonikerAttribute" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       CoreGenerateAssemblyInfo:
+       Se omitir├í el destino "CoreGenerateAssemblyInfo" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       _GenerateSourceLinkFile:
+         El v├¡nculo de origen est├í vac├¡o, el archivo 'obj\Debug\net10.0-windows\DesktopOrganizer.UI.sourcelink.json' no existe.
+       CoreCompile:
+       Se omitir├í el destino "CoreCompile" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       _CreateAppHost:
+       Se omitir├í el destino "_CreateAppHost" porque todos los archivos de salida est├ín actualizados respecto a los archivos de entrada.
+       _CopyOutOfDateSourceItemsToOutputDirectory:
+       Compilando parcialmente el destino "_CopyOutOfDateSourceItemsToOutputDirectory" porque algunos de los archivos de salida est├ín obsoletos respecto a los archivos de entrada.
+         Copiando el archivo de "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe".
+     1>C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 1 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         Copiando el archivo de "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe".
+     1>C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 2 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         Copiando el archivo de "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe".
+     1>C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 3 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         Copiando el archivo de "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe".
+     1>C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 4 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         Copiando el archivo de "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe".
+     1>C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 5 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         Copiando el archivo de "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe".
+     1>C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 6 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         Copiando el archivo de "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe".
+     1>C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 7 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         Copiando el archivo de "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe".
+     1>C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 8 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         Copiando el archivo de "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe".
+     1>C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 9 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         Copiando el archivo de "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe".
+     1>C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 10 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         Copiando el archivo de "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe".
+     1>C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): error MSB3027: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se super├│ el n├║mero de 10 reintentos. Error. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+     1>C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): error MSB3021: No se puede copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+     1>Compilaci├│n del proyecto terminada "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" (destinos predeterminados) -- ERROR.
+
+ERROR al compilar.
+
+       "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" (destino predeterminado) (1:7) ->
+       (_CopyOutOfDateSourceItemsToOutputDirectory destino) -> 
+         C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 1 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 2 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 3 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 4 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 5 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 6 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 7 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 8 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 9 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): warning MSB3026: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se iniciar├í el reintento 10 dentro de 1000ms. The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+
+
+       "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj" (destino predeterminado) (1:7) ->
+       (_CopyOutOfDateSourceItemsToOutputDirectory destino) -> 
+         C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): error MSB3027: No se pudo copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". Se super├│ el n├║mero de 10 reintentos. Error. El archivo se ha bloqueado por: "DesktopOrganizer.UI (27612)" [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+         C:\Program Files\dotnet\sdk\10.0.100\Microsoft.Common.CurrentVersion.targets(5381,5): error MSB3021: No se puede copiar "D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\apphost.exe" en "bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe". The process cannot access the file 'D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\bin\Debug\net10.0-windows\DesktopOrganizer.UI.exe' because it is being used by another process. [D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\DesktopOrganizer.UI.csproj]
+
+    10 Advertencia(s)
+    2 Errores
+
+Tiempo transcurrido 00:00:12.66

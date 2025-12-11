@@ -51,6 +51,22 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public ICommand OpenRuleEditorCommand { get; }
     public ICommand OpenLogsCommand { get; }
     public ICommand OpenSettingsCommand { get; }
+    public ICommand SortDesktopCommand { get; }
+
+    private ObservableCollection<FenceConfiguration> _fences;
+    private readonly DesktopOrganizer.UI.Services.FenceManager _fenceManager;
+
+    public ObservableCollection<FenceConfiguration> Fences
+    {
+        get => _fences;
+        set
+        {
+            _fences = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public ICommand SaveRulesCommand { get; }
 
     public MainWindowViewModel(
         IFileWatcher fileWatcher, 
@@ -58,7 +74,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
         System.Func<RuleEditorView> ruleEditorFactory,
         System.Func<LogsView> logsViewFactory,
         System.Func<SettingsView> settingsViewFactory,
-        IRepository<UserPreferences> prefsRepository)
+        IRepository<UserPreferences> prefsRepository,
+        DesktopOrganizer.UI.Services.FenceManager fenceManager)
     {
         _fileWatcher = fileWatcher;
         _fileOrganizer = fileOrganizer;
@@ -66,16 +83,20 @@ public class MainWindowViewModel : INotifyPropertyChanged
         _logsViewFactory = logsViewFactory;
         _settingsViewFactory = settingsViewFactory;
         _prefsRepository = prefsRepository;
+        _fenceManager = fenceManager;
         
         ToggleMonitoringCommand = new RelayCommand(ToggleMonitoring);
         OpenRuleEditorCommand = new RelayCommand(OpenRuleEditor);
         OpenLogsCommand = new RelayCommand(OpenLogs);
         OpenSettingsCommand = new RelayCommand(OpenSettings);
+        SaveRulesCommand = new RelayCommand(SaveFenceRules);
+        SortDesktopCommand = new RelayCommand(SortDesktop);
         
         // Subscribe to events
         _fileWatcher.FileCreated += OnFileDetected;
+        _fenceManager.FencesUpdated += () => System.Windows.Application.Current.Dispatcher.Invoke(InitializeAsync);
 
-        // Load rules
+        // Load rules and fences
         InitializeAsync();
     }
 
@@ -97,17 +118,66 @@ public class MainWindowViewModel : INotifyPropertyChanged
         settingsView.Show();
     }
 
+    private void SaveFenceRules(object? parameter)
+    {
+        if (parameter is FenceConfiguration fence)
+        {
+            try
+            {
+                _fenceManager.UpdateFenceRules(fence.Id, fence.Extensions);
+                StatusMessage = $"Reglas actualizadas para {fence.Name}";
+            }
+            catch (System.Exception ex)
+            {
+                StatusMessage = $"Error guardando reglas: {ex.Message}";
+            }
+        }
+    }
+
+    private async void SortDesktop(object? parameter)
+    {
+        try
+        {
+            StatusMessage = "Sorting desktop...";
+            var desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+            var files = System.IO.Directory.GetFiles(desktopPath);
+            
+            int count = 0;
+            foreach (var file in files)
+            {
+                // Skip hidden files or system files if needed, but Organizer handles valid files
+                await _fileOrganizer.OrganizeFileAsync(file);
+                count++;
+            }
+            
+            StatusMessage = $"Sorted {count} files.";
+            
+            // Allow fences to refresh
+            // They watch FS so they should update automatically if files are moved/renamed
+            // But if moved to folders, they disappear from fences.
+        }
+        catch (System.Exception ex)
+        {
+            StatusMessage = $"Error sorting: {ex.Message}";
+        }
+    }
+
     private async void InitializeAsync()
     {
         try
         {
-            StatusMessage = "Loading rules...";
+            StatusMessage = "Loading rules and fences...";
             await _fileOrganizer.LoadRulesAsync();
+            
+            // Load fences on UI thread
+            var fences = _fenceManager.GetAllFences();
+            Fences = new ObservableCollection<FenceConfiguration>(fences);
+            
             StatusMessage = "Ready";
         }
         catch (System.Exception ex)
         {
-            StatusMessage = $"Error loading rules: {ex.Message}";
+            StatusMessage = $"Error loading: {ex.Message}";
         }
     }
 

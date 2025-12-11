@@ -10,10 +10,10 @@ namespace DesktopOrganizer.UI.ViewModels;
 
 public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
 {
-    private string _title;
+    private string _title = string.Empty;
     private readonly string _folderPath; // This will now be the Desktop path
     private readonly string[] _extensions; // Extensions to filter
-    private FileSystemWatcher _watcher;
+    private FileSystemWatcher _watcher = null!;
 
     public string Title
     {
@@ -26,6 +26,41 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
     }
 
     public ObservableCollection<FileItemViewModel> Files { get; } = new ObservableCollection<FileItemViewModel>();
+
+    public event EventHandler? FilesChanged;
+    
+    // Style Properties
+    private string _hexColor = "#CC1E293B";
+    private double _opacity = 0.85;
+    
+    public string HexColor 
+    { 
+        get => _hexColor;
+        set
+        {
+            _hexColor = value;
+            OnPropertyChanged(nameof(HexColor));
+            OnPropertyChanged(nameof(HeaderColor));
+        }
+    }
+    
+    public double Opacity 
+    { 
+        get => _opacity;
+        set
+        {
+            _opacity = value;
+            OnPropertyChanged(nameof(Opacity));
+        }
+    }
+    
+    // Header is always fully opaque but darker version of the color
+    public string HeaderColor => _hexColor.StartsWith("#CC") ? _hexColor.Replace("#CC", "#FF") : 
+                                  _hexColor.StartsWith("#") && _hexColor.Length == 7 ? "#FF" + _hexColor.Substring(1) : _hexColor;
+    
+    // Computed properties for UI
+    public bool HasFiles => Files.Count > 0;
+    public bool IsEmpty => Files.Count == 0;
 
     public FenceViewModel(string title, string folderPath, string[] extensions)
     {
@@ -63,6 +98,10 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
                     });
                 }
             }
+
+            FilesChanged?.Invoke(this, EventArgs.Empty);
+            OnPropertyChanged(nameof(HasFiles));
+            OnPropertyChanged(nameof(IsEmpty));
         });
     }
 
@@ -84,13 +123,16 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
         Application.Current.Dispatcher.Invoke(() => LoadFiles());
     }
 
+    // Event to request rule update (Id, Extension)
+    public event Action<int, string>? RequestRuleUpdate;
+    public int Id { get; set; }
+
     public void AddFiles(string[] files)
     {
         // When dropping files onto this fence:
         // 1. If the file is NOT on the desktop, move it to the desktop.
         // 2. If it IS on the desktop, do nothing (it's already there).
-        // 3. Ideally, we should check if the file extension matches this fence. If not, maybe warn? 
-        //    But for now, let's just move it to Desktop.
+        // 3. Check if extension matches. If not, ask user to add it.
 
         foreach (var file in files)
         {
@@ -100,6 +142,28 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
             {
                 var fileName = Path.GetFileName(file);
                 var destPath = Path.Combine(_folderPath, fileName); // _folderPath is Desktop
+                var ext = Path.GetExtension(file).ToLower();
+
+                // Check extension match for this fence
+                // We do this check regardless of whether it moved or was already there.
+                // NOTE: _extensions is empty for "Others" usually, or specific logic. 
+                // If _extensions is empty (and not Others), maybe it accepts all? 
+                // But for standard fences, it has values.
+                if (_extensions.Length > 0 && !_extensions.Contains(ext) && !string.IsNullOrEmpty(ext))
+                {
+                    // Prompt user
+                    var result = System.Windows.MessageBox.Show(
+                        $"El archivo '{fileName}' ({ext}) no pertenece a este fence.\n¿Quieres añadir '{ext}' a las reglas?", 
+                        "Actualizar Reglas", 
+                        System.Windows.MessageBoxButton.YesNo, 
+                        System.Windows.MessageBoxImage.Question);
+                        
+                    if (result == System.Windows.MessageBoxResult.Yes)
+                    {
+                        RequestRuleUpdate?.Invoke(Id, ext);
+                        // Once updated, the fence will reload, so we might not need to continue logic for this file immediately
+                    }
+                }
 
                 // Check if source and dest are same
                 if (string.Equals(file, destPath, StringComparison.OrdinalIgnoreCase))
@@ -111,7 +175,7 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
                 if (File.Exists(destPath) || Directory.Exists(destPath))
                 {
                     string nameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
-                    string ext = Path.GetExtension(fileName);
+                    // string ext = Path.GetExtension(fileName); // already calc
                     string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
                     destPath = Path.Combine(_folderPath, $"{nameWithoutExt}_{timestamp}{ext}");
                 }
@@ -136,4 +200,59 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged(string propertyName) => 
         PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+
+    // Commands
+    public System.Windows.Input.ICommand OpenCommand => new RelayCommand(param => 
+    {
+        if (param is FileItemViewModel file)
+        {
+            try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(file.FullPath) { UseShellExecute = true }); } catch { }
+        }
+    });
+
+    public System.Windows.Input.ICommand ShowInExplorerCommand => new RelayCommand(param => 
+    {
+        if (param is FileItemViewModel file)
+        {
+            try { System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{file.FullPath}\""); } catch { }
+        }
+    });
+
+    public System.Windows.Input.ICommand CopyCommand => new RelayCommand(param => 
+    {
+        if (param is FileItemViewModel file)
+        {
+            try 
+            {
+                var list = new System.Collections.Specialized.StringCollection { file.FullPath };
+                System.Windows.Clipboard.SetFileDropList(list);
+            } 
+            catch { }
+        }
+    });
+
+    public System.Windows.Input.ICommand DeleteCommand => new RelayCommand(param => 
+    {
+        if (param is FileItemViewModel file)
+        {
+            var result = System.Windows.MessageBox.Show(
+                $"¿Estás seguro de que quieres eliminar '{file.Name}'?\nIrreversiblemente (por ahora).",
+                "Eliminar Archivo",
+                System.Windows.MessageBoxButton.YesNo,
+                System.Windows.MessageBoxImage.Warning);
+            
+            if (result == System.Windows.MessageBoxResult.Yes)
+            {
+                try 
+                {
+                    System.IO.File.Delete(file.FullPath);
+                    // Watcher will remove it from list
+                } 
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"Error al eliminar: {ex.Message}");
+                }
+            }
+        }
+    });
 }

@@ -9,6 +9,7 @@ public class DesktopOrganizerDbContext : DbContext
     public DbSet<Rule> Rules { get; set; } = null!;
     public DbSet<FileLog> FileLogs { get; set; } = null!;
     public DbSet<UserPreferences> UserPreferences { get; set; } = null!;
+    public DbSet<FenceConfiguration> Fences { get; set; } = null!;
 
     public DesktopOrganizerDbContext(DbContextOptions<DesktopOrganizerDbContext> options)
         : base(options)
@@ -54,6 +55,13 @@ public class DesktopOrganizerDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Timestamp);
+        });
+
+        modelBuilder.Entity<FenceConfiguration>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired();
+            // Default values can be set here if needed
         });
     }
 }

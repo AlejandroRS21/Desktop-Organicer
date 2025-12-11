@@ -3,68 +3,700 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
+using DesktopOrganizer.Core.Models;
 using DesktopOrganizer.UI.ViewModels;
 using DesktopOrganizer.UI.Views;
+using DesktopOrganizer.UI.Helpers;
 
 namespace DesktopOrganizer.UI.Services;
 
 public class FenceManager
 {
+    public event Action? FencesUpdated;
+
     private readonly List<FenceWindow> _openFences = new List<FenceWindow>();
+    private readonly DesktopIconManager _iconManager = new DesktopIconManager();
+    private readonly IServiceScopeFactory _scopeFactory;
+    private bool _fencesVisible = true;
+
+    public FenceManager(IServiceScopeFactory scopeFactory)
+    {
+        _scopeFactory = scopeFactory;
+    }
+
+    private void WriteLog(string message)
+    {
+        try
+        {
+            var logPath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop), "fences_debug.txt");
+            System.IO.File.AppendAllText(logPath, $"{DateTime.Now}: {message}\n");
+        }
+        catch {}
+    }
 
     public void InitializeFences()
     {
-        // Close existing fences
-        foreach (var fence in _openFences.ToList())
+        try
         {
-            fence.Close();
+            // First, show any previously hidden icons
+            _iconManager.ShowAllIcons();
+            
+            // Close existing fences
+            foreach (var fence in _openFences.ToList())
+            {
+                try { fence.Close(); } catch {}
+            }
+            _openFences.Clear();
+
+            var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+            // Fetch Preferences and Fences from DB
+            UserPreferences prefs;
+            List<FenceConfiguration> savedFences;
+            
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+                
+                // Ensure database is created (just in case)
+                db.Database.EnsureCreated();
+                
+                try 
+                {
+                    var prefsRepo = scope.ServiceProvider.GetRequiredService<Core.Interfaces.IRepository<UserPreferences>>();
+                    prefs = prefsRepo.GetAllAsync().Result.FirstOrDefault() ?? new UserPreferences();
+                    
+                    savedFences = db.Fences.ToList();
+                    WriteLog($"DB Loaded. Prefs.IsFirstRun: {prefs.IsFirstRun}. Fences Count: {savedFences.Count}.");
+                }
+                catch (Exception ex) when (ex.InnerException?.Message.Contains("no such column") == true || ex.Message.Contains("no such table"))
+                {
+                    WriteLog($"SCHEMA ERROR: {ex.Message}. Resetting DB.");
+                    // Schema mismatch detected (missing column IsFirstRun or missing table). Reset DB.
+                    db.Database.EnsureDeleted();
+                    db.Database.EnsureCreated();
+                    
+                    // Re-fetch preferences after reset (they will be default)
+                    prefs = new UserPreferences();
+                    savedFences = new List<FenceConfiguration>();
+                }
+            }
+
+            // DIAGNOSTIC
+            // MessageBox.Show($"Debug: Cargados {savedFences.Count} fences de la BD.");
+
+            // IMPROVED LOGIC: 
+            // Only create defaults if IsFirstRun is true AND we really have no fences.
+            // If we have fences (even if IsFirstRun is true due to save failure), we assume initialized.
+            // If IsFirstRun is True AND Count is 0, it might be first run OR user deleted all. 
+            // To be safe, we rely on properly saving IsFirstRun = false.
+            
+            bool shouldCreateDefaults = prefs.IsFirstRun && savedFences.Count == 0;
+            
+            // Safety: If fences exist but flag is true, fix the flag immediately
+            if (prefs.IsFirstRun && savedFences.Count > 0)
+            {
+                 using (var scope = _scopeFactory.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+                    var dbPrefs = db.UserPreferences.FirstOrDefault();
+                    if (dbPrefs != null)
+                    {
+                        dbPrefs.IsFirstRun = false;
+                        db.SaveChanges();
+                    }
+                    prefs.IsFirstRun = false; 
+                }
+            }
+
+            if (shouldCreateDefaults)
+            {
+                // First run ever: Create defaults
+                CreateDefaultFences(desktopPath, prefs);
+                
+                // Update flag - Using DbContext directly to ensure SaveChanges
+                prefs.IsFirstRun = false;
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+                    // Fetch fresh entity to update
+                    var dbPrefs = db.UserPreferences.FirstOrDefault(); // Helper would be nice but this is reliable
+                    if (dbPrefs == null)
+                    {
+                        dbPrefs = new UserPreferences { IsFirstRun = false };
+                        db.UserPreferences.Add(dbPrefs);
+                    }
+                    else
+                    {
+                        dbPrefs.IsFirstRun = false;
+                    }
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                // Load existing (or empty if user deleted all)
+                LoadFencesFromConfig(savedFences, desktopPath, prefs);
+            }
+
+            _fencesVisible = true;
+            
+            // Hide all icons that are now shown in fences (after a small delay to let files load)
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                System.Threading.Thread.Sleep(500);
+                UpdateHiddenIcons();
+                // Notify UI that fences are ready
+                Application.Current.Dispatcher.Invoke(() => FencesUpdated?.Invoke());
+            }), System.Windows.Threading.DispatcherPriority.Background);
         }
-        _openFences.Clear();
-
-        var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
-        // Define categories and their extensions
-        var categories = new Dictionary<string, string[]>
+        catch (Exception ex)
         {
-            { "Documentos", new[] { ".pdf", ".doc", ".docx", ".txt", ".xls", ".xlsx", ".ppt", ".pptx", ".odt" } },
-            { "Imagenes", new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".ico" } },
-            { "Videos", new[] { ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv" } },
-            { "Musica", new[] { ".mp3", ".wav", ".flac", ".aac", ".ogg" } },
-            { "Aplicaciones", new[] { ".exe", ".lnk", ".msi" } },
-            { "Comprimidos", new[] { ".zip", ".rar", ".7z", ".tar", ".gz" } }
-        };
+            MessageBox.Show($"Error en InitializeFences: {ex.Message}\n{ex.StackTrace}");
+        }
+    }
 
-        // Position logic
-        double startX = SystemParameters.WorkArea.Width - 300; // Start from right side
-        double startY = 50;
-        double offset = 320; // Height + margin
+    private void CreateDefaultFences(string desktopPath, UserPreferences prefs)
+    {
+        // Define categories and their extensions
+        var categories = GetDefaultCategories();
+        
+        // Calculate grid layout - 3 columns
+        int columns = 3;
+        double fenceWidth = 200;
+        double fenceHeight = 260;
+        double marginX = 15;
+        double marginY = 15;
+        
+        // Start from top-right corner of the work area
+        double startX = SystemParameters.WorkArea.Width - (fenceWidth * columns) - (marginX * (columns + 1));
+        double startY = marginY;
 
+        int col = 0;
+        int row = 0;
+
+        // Create fences for each category
         foreach (var category in categories)
         {
-            // Create fence watching Desktop but filtering by extensions
-            CreateFence(category.Key, desktopPath, category.Value, startX, startY);
+            double x = startX + (col * (fenceWidth + marginX));
+            double y = startY + (row * (fenceHeight + marginY));
             
-            startY += offset;
-            
-            // Wrap to next column if too tall
-            if (startY > SystemParameters.WorkArea.Height - 300)
+            var extensions = category.Value;
+            var config = new FenceConfiguration
             {
-                startY = 50;
-                startX -= 270;
+                Name = category.Key,
+                Left = x,
+                Top = y,
+                Width = fenceWidth,
+                Height = fenceHeight,
+                Extensions = string.Join(";", extensions),
+                Category = "Default"
+            };
+            
+            // Save to DB
+            SaveFenceToDb(config);
+            
+            // Create Window
+            CreateFenceFromConfig(config, desktopPath, prefs, extensions);
+            
+            col++;
+            if (col >= columns)
+            {
+                col = 0;
+                row++;
+            }
+        }
+        
+        // Create "Otros" fence
+        {
+            double x = startX + (col * (fenceWidth + marginX));
+            double y = startY + (row * (fenceHeight + marginY));
+            
+            var config = new FenceConfiguration
+            {
+                Name = "📁 Otros",
+                Left = x,
+                Top = y,
+                Width = fenceWidth,
+                Height = fenceHeight,
+                Extensions = "*",
+                Category = "Others"
+            };
+            
+            SaveFenceToDb(config);
+            CreateOthersFence(config, desktopPath, prefs);
+        }
+    }
+
+    private void LoadFencesFromConfig(List<FenceConfiguration> configs, string desktopPath, UserPreferences prefs)
+    {
+        foreach (var config in configs)
+        {
+            // Validate position
+            EnsureFenceOnScreen(config);
+            
+            if (config.Category == "Others")
+            {
+                CreateOthersFence(config, desktopPath, prefs);
+            }
+            else
+            {
+                var extensions = config.Extensions.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                CreateFenceFromConfig(config, desktopPath, prefs, extensions);
             }
         }
     }
 
-    private void CreateFence(string title, string path, string[] extensions, double left, double top)
+    private void EnsureFenceOnScreen(FenceConfiguration config)
     {
-        var viewModel = new FenceViewModel(title, path, extensions);
+        // SystemParameters has individual properties for Virtual Screen bounds
+        double vLeft = SystemParameters.VirtualScreenLeft;
+        double vTop = SystemParameters.VirtualScreenTop;
+        double vWidth = SystemParameters.VirtualScreenWidth;
+        double vHeight = SystemParameters.VirtualScreenHeight;
+        
+
+        bool isOffScreen = 
+            config.Left > vLeft + vWidth - 50 || // Too far right (Right edge of screen)
+            config.Left + config.Width < vLeft + 50 || // Too far left
+            config.Top > vTop + vHeight - 50 || // Too far down
+            config.Top + config.Height < vTop + 50; // Too far up
+            
+        if (isOffScreen)
+        {
+            // Reset to top-left or a safe default
+            config.Left = 100;
+            config.Top = 100;
+            config.Width = Math.Max(config.Width, 200);
+            config.Height = Math.Max(config.Height, 260);
+            
+            // Update DB with reset position
+            UpdateFenceInDb(config);
+        }
+    }
+
+    private void CreateOthersFence(FenceConfiguration config, string path, UserPreferences prefs)
+    {
+        // Re-calculate all known extensions from other fences to exclude
+        // This is a bit expensive but ensures consistency
+        var allExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var defaultCats = GetDefaultCategories();
+        foreach(var ec in defaultCats.Values) 
+            foreach(var e in ec) allExtensions.Add(e);
+            
+        var viewModel = new OthersFenceViewModel(config.Name, path, allExtensions);
+        viewModel.HexColor = prefs.FenceColorHex;
+        viewModel.Opacity = prefs.FenceOpacity;
+        
+        ConfigureFenceWindow(viewModel, config);
+    }
+
+    private void UpdateHiddenIcons()
+    {
+        // Collect all file names that should be hidden (those shown in any fence)
+        var filesToHide = new List<string>();
+        
+        foreach (var fence in _openFences)
+        {
+            if (fence.DataContext is FenceViewModel vm)
+            {
+                foreach (var file in vm.Files)
+                {
+                    // Get just the file name without extension for matching
+                    var fileName = Path.GetFileNameWithoutExtension(file.FullPath);
+                    filesToHide.Add(fileName);
+                    
+                    // Also add with extension
+                    filesToHide.Add(Path.GetFileName(file.FullPath));
+                }
+            }
+        }
+
+        if (filesToHide.Count > 0)
+        {
+            _iconManager.HideIcons(filesToHide);
+        }
+    }
+
+    private void CreateFenceFromConfig(FenceConfiguration config, string path, UserPreferences prefs, string[] extensions)
+    {
+        var viewModel = new FenceViewModel(config.Name, path, extensions);
+        viewModel.HexColor = prefs.FenceColorHex;
+        viewModel.Opacity = prefs.FenceOpacity;
+        
+        ConfigureFenceWindow(viewModel, config);
+    }
+
+    private void ConfigureFenceWindow(FenceViewModel viewModel, FenceConfiguration config)
+    {
+        // Set ID for updates
+        viewModel.Id = config.Id;
+
+        viewModel.FilesChanged += (s, e) =>
+        {
+            Application.Current.Dispatcher.BeginInvoke(new Action(UpdateHiddenIcons), 
+                System.Windows.Threading.DispatcherPriority.Background);
+        };
+        
+        viewModel.RequestRuleUpdate += (id, ext) =>
+        {
+            try 
+            {
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+                    var fence = db.Fences.Find(id);
+                    if (fence != null)
+                    {
+                        // Check if extension exists (should check case insensitive split)
+                        var existing = fence.Extensions.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim().ToLower());
+                        if (!existing.Contains(ext.ToLower()))
+                        {
+                            fence.Extensions = fence.Extensions + ";" + ext;
+                            db.SaveChanges();
+                            
+                            // Reload fence on UI thread
+                            Application.Current.Dispatcher.Invoke(() => 
+                            {
+                                UpdateFenceRules(id, fence.Extensions);
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error actualizando regla: {ex.Message}");
+            }
+        };
+
         var window = new FenceWindow(viewModel);
-        window.Left = left;
-        window.Top = top;
+        window.Left = config.Left;
+        window.Top = config.Top;
+        window.Width = config.Width;
+        window.Height = config.Height;
+        
+        // Store Config ID in Tag or similar if needed, or lookup by Name
+        window.Tag = config.Id; 
+        
         window.Show();
         _openFences.Add(window);
         
-        // Remove from list when closed
-        window.Closed += (s, e) => _openFences.Remove(window);
+        // Debounce simple
+        System.Timers.Timer saveTimer = new System.Timers.Timer(500);
+        saveTimer.AutoReset = false;
+        saveTimer.Elapsed += (s, ev) => 
+        {
+             Application.Current.Dispatcher.Invoke(() => SaveFenceState(window, config));
+        };
+        
+        window.LocationChanged += (s, e) => {
+            saveTimer.Stop(); 
+            saveTimer.Start();
+        };
+        
+        window.SizeChanged += (s, e) => {
+            saveTimer.Stop();
+            saveTimer.Start();
+        };
+        
+        window.Closed += (s, e) =>
+        {
+            saveTimer.Dispose();
+            _openFences.Remove(window);
+            if (window.DataContext is FenceViewModel closedVm)
+            {
+                var filesToShow = closedVm.Files.Select(f => Path.GetFileName(f.FullPath)).ToList();
+                _iconManager.ShowIcons(filesToShow);
+            }
+        };
+    }
+
+    /// <summary>
+    /// Toggle visibility of all fences. When hidden, restores desktop icons to original positions.
+    /// </summary>
+    public void ToggleFencesVisibility()
+    {
+        if (_fencesVisible)
+        {
+            // Hide fences and show desktop icons
+            foreach (var fence in _openFences)
+            {
+                fence.Visibility = Visibility.Hidden;
+            }
+            
+            // Restore all hidden icons
+            _iconManager.ShowAllIcons();
+            _fencesVisible = false;
+        }
+        else
+        {
+            // Show fences and hide desktop icons
+            foreach (var fence in _openFences)
+            {
+                fence.Visibility = Visibility.Visible;
+            }
+            
+            // Hide icons again
+            UpdateHiddenIcons();
+            _fencesVisible = true;
+        }
+    }
+
+    /// <summary>
+    /// Close all fences and restore all desktop icons.
+    /// </summary>
+    public void CloseAllFences()
+    {
+        // Show all hidden icons first
+        _iconManager.ShowAllIcons();
+        
+        // Then close all fences
+        foreach (var fence in _openFences.ToList())
+        {
+            try { fence.Close(); } catch {}
+        }
+        _openFences.Clear();
+        _fencesVisible = false;
+    }
+
+    public bool AreFencesVisible => _fencesVisible && _openFences.Any();
+    
+    public int FenceCount => _openFences.Count;
+    
+    public int HiddenIconCount => _iconManager.HiddenIconCount;
+
+    /// <summary>
+    /// Creates a new custom fence at the specified position and size.
+    /// </summary>
+    public void CreateCustomFence(double left, double top, double width, double height, string? name = null)
+    {
+        var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        
+        UserPreferences prefs;
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var repo = scope.ServiceProvider.GetRequiredService<Core.Interfaces.IRepository<UserPreferences>>();
+            prefs = repo.GetAllAsync().Result.FirstOrDefault() ?? new UserPreferences();
+        }
+
+        var fenceName = name ?? GetUniqueFenceName("Nuevo Fence");
+        var config = new FenceConfiguration
+        {
+            Name = fenceName,
+            Left = left,
+            Top = top,
+            Width = Math.Max(width, 150),
+            Height = Math.Max(height, 100),
+            Extensions = "",
+            Category = "Custom"
+        };
+        
+        SaveFenceToDb(config);
+        CreateFenceFromConfig(config, desktopPath, prefs, Array.Empty<string>());
+        FencesUpdated?.Invoke();
+    }
+
+    /// <summary>
+    /// Returns a unique name by appending a number if the name already exists.
+    /// </summary>
+    private string GetUniqueFenceName(string baseName)
+    {
+        var existingNames = _openFences
+            .Select(f => (f.DataContext as FenceViewModel)?.Title)
+            .Where(t => t != null)
+            .ToHashSet();
+
+        if (!existingNames.Contains(baseName))
+            return baseName;
+
+        int counter = 2;
+        while (existingNames.Contains($"{baseName} {counter}"))
+        {
+            counter++;
+        }
+        
+        return $"{baseName} {counter}";
+    }
+
+    /// <summary>
+    /// Get all open fence titles/categories.
+    /// </summary>
+    public IEnumerable<string> GetFenceTitles()
+    {
+        return _openFences
+            .Select(f => (f.DataContext as FenceViewModel)?.Title ?? "Unknown")
+            .ToList();
+    }
+
+    /// <summary>
+    /// Save new fence to DB
+    /// </summary>
+    private void SaveFenceToDb(FenceConfiguration config)
+    {
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+            db.Fences.Add(config);
+            db.SaveChanges();
+            // ID is now populated
+        }
+    }
+
+    /// <summary>
+    /// Update existing fence in DB
+    /// </summary>
+    private void UpdateFenceInDb(FenceConfiguration config)
+    {
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+            db.Fences.Update(config);
+            db.SaveChanges();
+        }
+    }
+    
+    /// <summary>
+    /// Save fence state (pos/size) from Window
+    /// </summary>
+    private void SaveFenceState(Window window, FenceConfiguration config)
+    {
+        // Don't save if it's minimized/collapsed state affecting height uniquely without being true resize?
+        // But window.Height changes when we collapse.
+        // If we implemented collapse logic, we should probably check if we are in collapsed state before saving Height.
+        // Since `FenceWindow` handles collapse internally but updates ActualHeight...
+        // For now, let's just save. If user restarts app, it will start with that height.
+        // Ideally we should track "ExpandedHeight" in DB if we want to restore specifically that, or just restore state.
+        
+        if (window.WindowState == WindowState.Minimized) return;
+
+        config.Left = window.Left;
+        config.Top = window.Top;
+        config.Width = window.Width;
+        config.Height = window.Height;
+        
+        UpdateFenceInDb(config);
+    }
+    
+    public void DeleteFence(FenceViewModel vm)
+    {
+        WriteLog($"Attemping to delete fence: {vm.Title}");
+        var window = _openFences.FirstOrDefault(w => w.DataContext == vm);
+        if (window != null)
+        {
+            int? id = window.Tag as int?;
+            WriteLog($"Found window. Tag ID: {id}");
+            
+            if (id.HasValue)
+            {
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+                    var entity = db.Fences.Find(id.Value);
+                    if (entity != null)
+                    {
+                        WriteLog($"Entity found in DB. Removing ID: {entity.Id}, Name: {entity.Name}");
+                        db.Fences.Remove(entity);
+                        var result = db.SaveChanges();
+                        WriteLog($"SaveChanges result: {result}");
+                    }
+                    else
+                    {
+                        WriteLog("Entity NOT found in DB with that ID.");
+                    }
+                }
+            }
+            else
+            {
+                WriteLog("Error: Fence Window Tag (ID) is null.");
+                MessageBox.Show("Error: No se pudo identificar el Fence en la BD (Tag nulo).");
+            }
+            window.Close();
+            // Notify UI
+            FencesUpdated?.Invoke();
+        }
+        else
+        {
+            WriteLog("Could not find open window for this ViewModel.");
+        }
+    }
+
+    public static Dictionary<string, string[]> GetDefaultCategories()
+    {
+        return new Dictionary<string, string[]>
+        {
+            { "📄 Documentos", new[] { ".pdf", ".doc", ".docx", ".txt", ".xls", ".xlsx", ".ppt", ".pptx", ".odt", ".rtf", ".csv" } },
+            { "🖼️ Imágenes", new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".ico", ".tiff", ".psd" } },
+            { "🎬 Videos", new[] { ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm", ".m4v" } },
+            { "🎵 Música", new[] { ".mp3", ".wav", ".flac", ".aac", ".ogg", ".wma", ".m4a" } },
+            { "⚙️ Aplicaciones", new[] { ".exe", ".lnk", ".msi", ".bat", ".cmd", ".ps1", ".appx" } },
+            { "📦 Comprimidos", new[] { ".zip", ".rar", ".7z", ".tar", ".gz", ".bz2", ".xz" } },
+        };
+    }
+
+    /// <summary>
+    /// Get all fence configurations from DB
+    /// </summary>
+    public List<FenceConfiguration> GetAllFences()
+    {
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+            return db.Fences.ToList();
+        }
+    }
+
+    /// <summary>
+    /// Update rules for a specific fence and refresh it live
+    /// </summary>
+    public void UpdateFenceRules(int fenceId, string newExtensions)
+    {
+        // 1. Update in DB
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+            var fence = db.Fences.Find(fenceId);
+            if (fence != null)
+            {
+                fence.Extensions = newExtensions;
+                db.SaveChanges();
+            }
+        }
+
+        // 2. Find running fence and update it
+        // We need to match by ID. Window.Tag holds the ID.
+        var window = _openFences.FirstOrDefault(w => (w.Tag as int?) == fenceId);
+        if (window != null && window.DataContext is FenceViewModel vm)
+        {
+            // We need a method on ViewModel to update extensions, OR just restart this fence.
+            // Restarting is safer to ensure consistency.
+            window.Close();
+            // _openFences.Remove(window); // Close() event handler does this already
+
+            // Re-create it
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+                var config = db.Fences.Find(fenceId);
+                var prefsRepo = scope.ServiceProvider.GetRequiredService<Core.Interfaces.IRepository<UserPreferences>>();
+                var prefs = prefsRepo.GetAllAsync().Result.FirstOrDefault() ?? new UserPreferences();
+                
+                var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                if (config != null)
+                {
+                    if (config.Category == "Others")
+                    {
+                        CreateOthersFence(config, desktopPath, prefs);
+                    }
+                    else
+                    {
+                        var extensions = config.Extensions.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                        CreateFenceFromConfig(config, desktopPath, prefs, extensions);
+                    }
+                }
+            }
+            FencesUpdated?.Invoke();
+        }
     }
 }

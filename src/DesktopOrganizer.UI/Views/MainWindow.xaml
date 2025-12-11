@@ -199,27 +199,75 @@
                 </Border>
             </Grid>
 
-            <!-- Info Panel -->
+            <!-- Fences Management Panel -->
             <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0,20,0,0" Background="#F7FAFC">
-                <StackPanel>
-                    <TextBlock Text="📁 Categorías Activas" FontSize="16" FontWeight="SemiBold" Foreground="#2D3748" Margin="0,0,0,12"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel>
-                            <TextBlock Text="• Documentos (.pdf, .doc, .txt...)" FontSize="13" Foreground="#4A5568" Margin="0,0,0,6"/>
-                            <TextBlock Text="• Imágenes (.jpg, .png, .gif...)" FontSize="13" Foreground="#4A5568" Margin="0,0,0,6"/>
-                            <TextBlock Text="• Videos (.mp4, .avi, .mkv...)" FontSize="13" Foreground="#4A5568" Margin="0,0,0,6"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="1">
-                            <TextBlock Text="• Música (.mp3, .wav, .flac...)" FontSize="13" Foreground="#4A5568" Margin="0,0,0,6"/>
-                            <TextBlock Text="• Aplicaciones (.exe, .msi...)" FontSize="13" Foreground="#4A5568" Margin="0,0,0,6"/>
-                            <TextBlock Text="• Comprimidos (.zip, .rar, .7z...)" FontSize="13" Foreground="#4A5568" Margin="0,0,0,6"/>
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <TextBlock Text="📁 Fences Activos" FontSize="16" FontWeight="SemiBold" Foreground="#2D3748"/>
+                        <TextBlock Text="(Edita las extensiones para cambiar las reglas)" FontSize="12" Foreground="#718096" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </StackPanel>
+
+                    <ListBox Grid.Row="1" ItemsSource="{Binding Fences}" 
+                             Background="Transparent" BorderThickness="0"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             Height="180">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0,4"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <ContentPresenter/>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="80"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <TextBlock Text="{Binding Name}" FontWeight="Medium" VerticalAlignment="Center" Foreground="#4A5568"/>
+                                    
+                                    <TextBox Grid.Column="1" Text="{Binding Extensions, UpdateSourceTrigger=PropertyChanged}" 
+                                             Margin="10,0" Padding="8,4" VerticalContentAlignment="Center"
+                                             Background="White" BorderBrush="#E2E8F0" BorderThickness="1">
+                                        <TextBox.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="4"/>
+                                            </Style>
+                                        </TextBox.Resources>
+                                    </TextBox>
+                                    
+                                    <Button Grid.Column="2" Content="Guardar" 
+                                            Command="{Binding DataContext.SaveRulesCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                            CommandParameter="{Binding}"
+                                            Background="#E8EDF3" Foreground="#4A5568"
+                                            BorderThickness="0" Padding="10,4"
+                                            Cursor="Hand">
+                                        <Button.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="4"/>
+                                            </Style>
+                                        </Button.Resources>
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
             </Border>
         </Grid>
     </Grid>

@@ -13,6 +13,7 @@ using DesktopOrganizer.Data.Repositories;
 using DesktopOrganizer.Integration.FileSystemWatcher;
 using DesktopOrganizer.UI.ViewModels;
 using DesktopOrganizer.UI.Views;
+using DesktopOrganizer.UI.Services;
 
 namespace DesktopOrganizer.UI;
 
@@ -36,6 +37,18 @@ public partial class App : Application
                 MessageBoxImage.Error);
             throw;
         }
+    }
+
+    /// <summary>
+    /// Get a service from the DI container. Used for accessing services from code-behind.
+    /// </summary>
+    public static T? GetService<T>() where T : class
+    {
+        if (Current is App app && app._serviceProvider != null)
+        {
+            return app._serviceProvider.GetService<T>();
+        }
+        return null;
     }
 
     private void ConfigureServices(IServiceCollection services)
@@ -90,10 +103,43 @@ public partial class App : Application
         services.AddTransient<LogsView>();
         services.AddTransient<SettingsView>();
 
-        // Factories
-        services.AddSingleton<Func<RuleEditorView>>(provider => () => provider.GetRequiredService<RuleEditorView>());
-        services.AddSingleton<Func<LogsView>>(provider => () => provider.GetRequiredService<LogsView>());
-        services.AddSingleton<Func<SettingsView>>(provider => () => provider.GetRequiredService<SettingsView>());
+        // Factories (Scoped Window Creation)
+        services.AddSingleton<Func<RuleEditorView>>(provider => () => 
+        {
+            var scope = provider.CreateScope();
+            var view = scope.ServiceProvider.GetRequiredService<RuleEditorView>();
+            view.Closed += (s, e) => scope.Dispose();
+            return view;
+        });
+
+        services.AddSingleton<Func<LogsView>>(provider => () => 
+        {
+            var scope = provider.CreateScope();
+            var view = scope.ServiceProvider.GetRequiredService<LogsView>();
+            view.Closed += (s, e) => scope.Dispose();
+            return view;
+        });
+
+        services.AddSingleton<Func<SettingsView>>(provider => () => 
+        {
+            var scope = provider.CreateScope();
+            var view = scope.ServiceProvider.GetRequiredService<SettingsView>();
+            view.Closed += (s, e) => scope.Dispose();
+            return view;
+        });
+        
+        // Tray Icon (Settings Window Factory)
+        services.AddSingleton<TrayIconService>(provider => 
+        {
+            var fenceManager = provider.GetRequiredService<FenceManager>();
+            return new TrayIconService(() => 
+            {
+                var scope = provider.CreateScope();
+                var window = scope.ServiceProvider.GetRequiredService<SettingsView>();
+                window.Closed += (s, e) => scope.Dispose();
+                return window;
+            }, fenceManager);
+        });
     }
 
     private void OnStartup(object sender, StartupEventArgs e)
@@ -107,7 +153,11 @@ public partial class App : Application
                 
                 try
                 {
-                    _ = context.UserPreferences.Any();
+                    // Force a query that uses the new column in the SQL WHERE clause
+                    // This triggers "no such column" error even if table is empty
+                    var validSchema = context.UserPreferences
+                        .Where(u => u.EnableFenceBlur == true || u.FenceOpacity > 0)
+                        .Any();
                 }
                 catch
                 {
@@ -190,8 +240,15 @@ public partial class App : Application
             // var fileWatcherService = _serviceProvider.GetRequiredService<IFileWatcher>();
             // fileWatcherService.Start();
 
-            var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-            mainWindow.Show();
+            // Start Tray Icon
+            var trayService = _serviceProvider.GetRequiredService<TrayIconService>();
+            
+            // Prevent app from closing when main window closes
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+            // We don't show main window by default anymore, we let the user open it from tray
+            // var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+            // mainWindow.Show();
         }
         catch (Exception ex)
         {

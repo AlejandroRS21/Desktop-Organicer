@@ -26,6 +26,45 @@ public class SettingsViewModel : INotifyPropertyChanged
         }
     }
 
+    public double FenceOpacity
+    {
+        get => _preferences?.FenceOpacity ?? 0.6;
+        set
+        {
+            if (_preferences != null)
+            {
+                _preferences.FenceOpacity = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public string FenceColorHex
+    {
+        get => _preferences?.FenceColorHex ?? "#1E293B";
+        set
+        {
+            if (_preferences != null)
+            {
+                _preferences.FenceColorHex = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public bool EnableFenceBlur
+    {
+        get => _preferences?.EnableFenceBlur ?? true;
+        set
+        {
+            if (_preferences != null)
+            {
+                _preferences.EnableFenceBlur = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
     public string StatusMessage
     {
         get => _statusMessage;
@@ -35,14 +74,16 @@ public class SettingsViewModel : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-
     public ICommand SaveCommand { get; }
 
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
-    public SettingsViewModel(IRepository<UserPreferences> prefsRepository)
+    private readonly DesktopOrganizer.UI.Services.FenceManager _fenceManager;
+
+    public SettingsViewModel(IRepository<UserPreferences> prefsRepository, DesktopOrganizer.UI.Services.FenceManager fenceManager)
     {
         _prefsRepository = prefsRepository;
+        _fenceManager = fenceManager;
         _preferences = new UserPreferences(); // Default
 
         SaveCommand = new RelayCommand(async _ => await SavePreferencesAsync());
@@ -52,7 +93,7 @@ public class SettingsViewModel : INotifyPropertyChanged
 
     private async Task LoadPreferencesAsync()
     {
-        StatusMessage = "Loading settings...";
+        StatusMessage = "Cargando configuración...";
         var prefs = (await _prefsRepository.GetAllAsync()).FirstOrDefault();
         if (prefs == null)
         {
@@ -66,7 +107,10 @@ public class SettingsViewModel : INotifyPropertyChanged
         
         _preferences = prefs;
         OnPropertyChanged(nameof(MonitoredDirectories));
-        StatusMessage = "Settings loaded.";
+        OnPropertyChanged(nameof(FenceOpacity));
+        OnPropertyChanged(nameof(FenceColorHex));
+        OnPropertyChanged(nameof(EnableFenceBlur));
+        StatusMessage = "Configuración cargada.";
     }
 
     private async Task SavePreferencesAsync()
@@ -74,7 +118,15 @@ public class SettingsViewModel : INotifyPropertyChanged
         if (_preferences != null)
         {
             await _prefsRepository.UpdateAsync(_preferences);
-            StatusMessage = "Settings saved.";
+            
+            // Reload fences to apply changes
+            StatusMessage = "Guardando y aplicando cambios...";
+            await System.Windows.Application.Current.Dispatcher.InvokeAsync(() => 
+            {
+                _fenceManager.InitializeFences();
+            });
+
+            StatusMessage = "Configuración guardada y Fences actualizados.";
         }
     }
 
