@@ -10,13 +10,15 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("DesktopOrganizer.Core")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("DesktopOrganizer.UI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+53123efbb4e6b64723b6b528649805ee8594366d")]
-[assembly: System.Reflection.AssemblyProductAttribute("DesktopOrganizer.Core")]
-[assembly: System.Reflection.AssemblyTitleAttribute("DesktopOrganizer.Core")]
+[assembly: System.Reflection.AssemblyProductAttribute("DesktopOrganizer.UI")]
+[assembly: System.Reflection.AssemblyTitleAttribute("DesktopOrganizer.UI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
+[assembly: System.Runtime.Versioning.TargetPlatformAttribute("Windows7.0")]
+[assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("Windows7.0")]
 
 // Generado por la clase WriteCodeFragment de MSBuild.
 

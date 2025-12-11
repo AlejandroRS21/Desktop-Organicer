@@ -13,3 +13,4 @@ D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\refint\DesktopOrganizer.Integration.dll
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\DesktopOrganizer.Integration.pdb
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\ref\DesktopOrganizer.Integration.dll
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\DesktopOrganizer.Integration.sourcelink.json

@@ -17,7 +17,33 @@ public class RuleEditorViewModel : INotifyPropertyChanged
 
     public ObservableCollection<Rule> Rules { get; } = new();
 
-    // ... (properties)
+    public Rule? SelectedRule
+    {
+        get => _selectedRule;
+        set
+        {
+            _selectedRule = value;
+            OnPropertyChanged();
+            (DeleteRuleCommand as RelayCommand)?.RaiseCanExecuteChanged();
+        }
+    }
+
+    public string StatusMessage
+    {
+        get => _statusMessage;
+        set
+        {
+            _statusMessage = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public ICommand LoadRulesCommand { get; }
+    public ICommand AddRuleCommand { get; }
+    public ICommand DeleteRuleCommand { get; }
+    public ICommand SaveRuleCommand { get; }
+
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
     public RuleEditorViewModel(IRepository<Rule> ruleRepository, DesktopOrganizer.UI.Services.FenceManager fenceManager)
     {
@@ -25,7 +51,6 @@ public class RuleEditorViewModel : INotifyPropertyChanged
         _fenceManager = fenceManager;
 
         LoadRulesCommand = new RelayCommand(async _ => await LoadRulesAsync());
-        // ... (rest of constructor)
         AddRuleCommand = new RelayCommand(async _ => await AddRuleAsync());
         DeleteRuleCommand = new RelayCommand(async _ => await DeleteRuleAsync(), _ => SelectedRule != null);
         SaveRuleCommand = new RelayCommand(async _ => await SaveRulesAsync());

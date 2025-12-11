@@ -15,3 +15,4 @@ D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\refin
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.pdb
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.genruntimeconfig.cache
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\ref\DesktopOrganizer.Data.dll
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.sourcelink.json

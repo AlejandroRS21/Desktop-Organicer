@@ -9,3 +9,4 @@ D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\Deskt
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\refint\DesktopOrganizer.Core.dll
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\DesktopOrganizer.Core.pdb
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\ref\DesktopOrganizer.Core.dll
+D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\DesktopOrganizer.Core.sourcelink.json
