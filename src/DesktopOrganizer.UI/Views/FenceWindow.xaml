@@ -11,10 +11,7 @@
         AllowsTransparency="True"
         Background="Transparent"
         ShowInTaskbar="False"
-        ResizeMode="NoResize"
-        AllowDrop="True"
-        DragOver="Window_DragOver"
-        Drop="Window_Drop">
+        ResizeMode="NoResize">
 
     <!-- Context Menu -->
     <Window.ContextMenu>
@@ -43,7 +40,11 @@
         <Border CornerRadius="10" 
                 BorderBrush="#40FFFFFF" 
                 BorderThickness="1"
-                Margin="4">
+                Margin="4"
+                Background="Transparent"
+                AllowDrop="True"
+                PreviewDragOver="Window_DragOver"
+                PreviewDrop="Window_Drop">
             <Border.Effect>
                 <DropShadowEffect Color="Black" BlurRadius="15" Opacity="0.3" ShadowDepth="3"/>
             </Border.Effect>
