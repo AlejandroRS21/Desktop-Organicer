@@ -11,44 +11,21 @@ namespace DesktopOrganizer.UI.ViewModels;
 public class RuleEditorViewModel : INotifyPropertyChanged
 {
     private readonly IRepository<Rule> _ruleRepository;
+    private readonly DesktopOrganizer.UI.Services.FenceManager _fenceManager;
     private Rule? _selectedRule;
     private string _statusMessage = "";
 
     public ObservableCollection<Rule> Rules { get; } = new();
 
-    public Rule? SelectedRule
-    {
-        get => _selectedRule;
-        set
-        {
-            _selectedRule = value;
-            OnPropertyChanged();
-            (DeleteRuleCommand as RelayCommand)?.RaiseCanExecuteChanged();
-        }
-    }
+    // ... (properties)
 
-    public string StatusMessage
-    {
-        get => _statusMessage;
-        set
-        {
-            _statusMessage = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public ICommand LoadRulesCommand { get; }
-    public ICommand AddRuleCommand { get; }
-    public ICommand DeleteRuleCommand { get; }
-    public ICommand SaveRuleCommand { get; }
-
-    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
-
-    public RuleEditorViewModel(IRepository<Rule> ruleRepository)
+    public RuleEditorViewModel(IRepository<Rule> ruleRepository, DesktopOrganizer.UI.Services.FenceManager fenceManager)
     {
         _ruleRepository = ruleRepository;
+        _fenceManager = fenceManager;
 
         LoadRulesCommand = new RelayCommand(async _ => await LoadRulesAsync());
+        // ... (rest of constructor)
         AddRuleCommand = new RelayCommand(async _ => await AddRuleAsync());
         DeleteRuleCommand = new RelayCommand(async _ => await DeleteRuleAsync(), _ => SelectedRule != null);
         SaveRuleCommand = new RelayCommand(async _ => await SaveRulesAsync());
@@ -62,11 +39,32 @@ public class RuleEditorViewModel : INotifyPropertyChanged
         StatusMessage = "Loading rules...";
         Rules.Clear();
         var rules = await _ruleRepository.GetAllAsync();
+        var fences = _fenceManager.GetAllFences();
+
         foreach (var rule in rules)
         {
-            Rules.Add(rule);
+            // Filter: Only show rules that correspond to an active fence
+            // This prevents "Ghost Fences" (rules for deleted fences) from appearing
+            
+            bool hasMatchingFence = fences.Any(f => 
+                // Check exact name match
+                f.Name == rule.Name || 
+                // Check if fence name contains rule name (handles emojis like "🎵 Música" vs "Música")
+                f.Name.Contains(rule.Name) ||
+                // Check internal category match
+                f.Category == rule.TargetCategory
+            );
+
+            // If it's a "System" rule that organizes files, maybe we still want it?
+            // User specially complained about "musica y comprimidos que ya eliminé".
+            // So if they deleted the fence, they want the rule gone/hidden.
+            
+            if (hasMatchingFence)
+            {
+                Rules.Add(rule);
+            }
         }
-        StatusMessage = "Rules loaded.";
+        StatusMessage = "Rules loaded (Synced with Fences).";
     }
 
     private async Task AddRuleAsync()

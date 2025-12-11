@@ -109,6 +109,11 @@ public partial class App : Application
             var scope = provider.CreateScope();
             var view = scope.ServiceProvider.GetRequiredService<RuleEditorView>();
             view.Closed += (s, e) => scope.Dispose();
+            // Trigger refresh on load because we want latest fences
+            if (view.DataContext is RuleEditorViewModel vm)
+            {
+                vm.LoadRulesCommand.Execute(null);
+            }
             return view;
         });
 
@@ -132,13 +137,14 @@ public partial class App : Application
         services.AddSingleton<TrayIconService>(provider => 
         {
             var fenceManager = provider.GetRequiredService<FenceManager>();
+            var fileOrganizer = provider.GetRequiredService<FileOrganizer>(); // Added
             return new TrayIconService(() => 
             {
                 var scope = provider.CreateScope();
                 var window = scope.ServiceProvider.GetRequiredService<SettingsView>();
                 window.Closed += (s, e) => scope.Dispose();
                 return window;
-            }, fenceManager);
+            }, fenceManager, fileOrganizer); // Added arg
         });
     }
 

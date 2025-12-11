@@ -175,6 +175,35 @@ public class TrayIconService : IDisposable
         });
     }
 
+    private void SortDesktopNow()
+    {
+        // Run in background to avoid freezing UI
+        System.Threading.Tasks.Task.Run(async () => 
+        {
+            try
+            {
+                var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                var files = System.IO.Directory.GetFiles(desktopPath);
+                
+                int count = 0;
+                foreach (var file in files)
+                {
+                    await _fileOrganizer.OrganizeFileAsync(file);
+                    count++;
+                }
+
+                ShowBalloon("Escritorio Ordenado", $"Se han organizado {count} archivos según las reglas.");
+                
+                // Refresh fences just in case
+                RefreshFences();
+            }
+            catch (Exception ex)
+            {
+                ShowBalloon("Error", $"Error al ordenar: {ex.Message}");
+            }
+        });
+    }
+
     private void RefreshFences()
     {
         Application.Current.Dispatcher.Invoke(() =>

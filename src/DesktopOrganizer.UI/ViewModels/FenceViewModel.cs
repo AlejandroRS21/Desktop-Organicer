@@ -144,11 +144,8 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
                 var destPath = Path.Combine(_folderPath, fileName); // _folderPath is Desktop
                 var ext = Path.GetExtension(file).ToLower();
 
-                // Check extension match for this fence
+                // 1. Check extension match FIRST
                 // We do this check regardless of whether it moved or was already there.
-                // NOTE: _extensions is empty for "Others" usually, or specific logic. 
-                // If _extensions is empty (and not Others), maybe it accepts all? 
-                // But for standard fences, it has values.
                 if (_extensions.Length > 0 && !_extensions.Contains(ext) && !string.IsNullOrEmpty(ext))
                 {
                     // Prompt user
@@ -161,14 +158,20 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
                     if (result == System.Windows.MessageBoxResult.Yes)
                     {
                         RequestRuleUpdate?.Invoke(Id, ext);
-                        // Once updated, the fence will reload, so we might not need to continue logic for this file immediately
+                        // Return/Continue because the window will reload
+                        continue; 
+                    }
+                    else
+                    {
+                        // User said No, so we skip this file
+                        continue;
                     }
                 }
 
-                // Check if source and dest are same
+                // 2. Check if source and dest are same
                 if (string.Equals(file, destPath, StringComparison.OrdinalIgnoreCase))
                 {
-                    continue; // Already on desktop
+                    continue; // Already on desktop, and rules are fine
                 }
 
                 // Handle duplicate names
