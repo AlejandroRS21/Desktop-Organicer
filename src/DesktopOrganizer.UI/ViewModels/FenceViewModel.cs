@@ -63,8 +63,8 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
     public bool HasFiles => Files.Count > 0;
     public bool IsEmpty => Files.Count == 0;
 
-    private readonly HashSet<string> _includedFiles;
-    private readonly HashSet<string> _excludedFiles;
+    protected readonly HashSet<string> _includedFiles;
+    protected readonly HashSet<string> _excludedFiles;
 
     public FenceViewModel(string title, string folderPath, string[] extensions, IEnumerable<string> includedFiles, IEnumerable<string> excludedFiles)
     {
@@ -305,7 +305,7 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
         if (param is FileItemViewModel file)
         {
             var result = System.Windows.MessageBox.Show(
-                $"¿Estás seguro de que quieres eliminar '{file.Name}'?\nIrreversiblemente (por ahora).",
+                $"¿Estás seguro de que quieres eliminar '{file.Name}'?\nSe enviará a la Papelera de Reciclaje.",
                 "Eliminar Archivo",
                 System.Windows.MessageBoxButton.YesNo,
                 System.Windows.MessageBoxImage.Warning);
@@ -314,7 +314,7 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
             {
                 try 
                 {
-                    System.IO.File.Delete(file.FullPath);
+                    ShellHelper.DeleteToRecycleBin(file.FullPath);
                     // Watcher will remove it from list
                 } 
                 catch (Exception ex)
@@ -340,5 +340,28 @@ public class FenceViewModel : System.ComponentModel.INotifyPropertyChanged
                 RequestExclusionUpdate?.Invoke(Id, file.Name);
             }
         }
+    });
+
+    // Native Context Menu Commands (New Additions)
+    public System.Windows.Input.ICommand OpenWithCommand => new RelayCommand(param =>
+    {
+        if (param is FileItemViewModel file) ShellHelper.OpenWith(file.FullPath);
+    });
+
+    public System.Windows.Input.ICommand CutCommand => new RelayCommand(param =>
+    {
+        if (param is FileItemViewModel file)
+        {
+             var list = new System.Collections.Specialized.StringCollection { file.FullPath };
+             Clipboard.SetFileDropList(list);
+             // Note: Move effect requires DragDrop, usually Cut just copies to clipboard.
+        }
+    });
+
+
+
+    public System.Windows.Input.ICommand PropertiesCommand => new RelayCommand(param =>
+    {
+        if (param is FileItemViewModel file) ShellHelper.ShowProperties(file.FullPath);
     });
 }

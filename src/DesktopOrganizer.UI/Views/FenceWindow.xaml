@@ -223,19 +223,34 @@
                                 
                                 <Border.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Abrir" Command="{Binding DataContext.OpenCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}">
+                                        <MenuItem Header="Abrir" Command="{Binding DataContext.OpenCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" FontWeight="Bold">
                                             <MenuItem.Icon><TextBlock Text="📂"/></MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Header="Abrir ubicación" Command="{Binding DataContext.ShowInExplorerCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}">
                                             <MenuItem.Icon><TextBlock Text="📁"/></MenuItem.Icon>
                                         </MenuItem>
+                                        <MenuItem Header="Abrir con..." Command="{Binding DataContext.OpenWithCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}">
+                                            <MenuItem.Icon><TextBlock Text="↗️"/></MenuItem.Icon>
+                                        </MenuItem>
                                         <Separator/>
+                                        <MenuItem Header="Cortar" Command="{Binding DataContext.CutCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}">
+                                            <MenuItem.Icon><TextBlock Text="✂️"/></MenuItem.Icon>
+                                        </MenuItem>
                                         <MenuItem Header="Copiar" Command="{Binding DataContext.CopyCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}">
                                             <MenuItem.Icon><TextBlock Text="📋"/></MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Header="🚫 Quitar del Fence" Command="{Binding DataContext.ExcludeCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
+                                        <Separator/>
                                         <MenuItem Header="Eliminar" Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" Foreground="#DC2626">
                                             <MenuItem.Icon><TextBlock Text="🗑️"/></MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Propiedades" Command="{Binding DataContext.PropertiesCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}">
+                                            <MenuItem.Icon><TextBlock Text="ℹ️"/></MenuItem.Icon>
+                                        </MenuItem>
+                                        <Separator/>
+                                        <MenuItem Header="🚫 Quitar del Fence" Command="{Binding DataContext.ExcludeCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" Foreground="#FF6B6B">
+                                             <MenuItem.Icon>
+                                                <TextBlock Text="🚫" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            </MenuItem.Icon>
                                         </MenuItem>
                                     </ContextMenu>
                                 </Border.ContextMenu>

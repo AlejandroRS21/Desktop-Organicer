@@ -14,8 +14,8 @@ public class OthersFenceViewModel : FenceViewModel
 {
     private readonly HashSet<string> _excludeExtensions;
 
-    public OthersFenceViewModel(string title, string folderPath, HashSet<string> excludeExtensions) 
-        : base(title, folderPath, Array.Empty<string>(), null, null)
+    public OthersFenceViewModel(string title, string folderPath, HashSet<string> excludeExtensions, IEnumerable<string> includedFiles, IEnumerable<string> excludedFiles) 
+        : base(title, folderPath, Array.Empty<string>(), includedFiles, excludedFiles)
     {
         _excludeExtensions = excludeExtensions;
         LoadOtherFiles();
@@ -33,15 +33,22 @@ public class OthersFenceViewModel : FenceViewModel
             Files.Clear();
             foreach (var file in files)
             {
+                var fileName = Path.GetFileName(file);
                 var ext = Path.GetExtension(file).ToLower();
+
+                // 1. Check Exclusion (Priority High)
+                if (_excludedFiles.Contains(fileName)) continue;
+
+                // 2. Check Inclusion (Priority Medium - Force Include)
+                bool isIncluded = _includedFiles.Contains(fileName);
                 
-                // Include files that DON'T match any known extension
-                // Also include files with no extension
-                if (!_excludeExtensions.Contains(ext))
+                // 3. Check "Others" Logic (Not in excluded extensions)
+                // Include files that DON'T match any known extension OR are explicitly included
+                if (isIncluded || !_excludeExtensions.Contains(ext))
                 {
                     Files.Add(new FileItemViewModel
                     {
-                        Name = Path.GetFileName(file),
+                        Name = fileName,
                         FullPath = file,
                         Icon = IconHelper.GetIcon(file)
                     });

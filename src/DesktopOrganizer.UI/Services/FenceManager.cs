@@ -284,8 +284,11 @@ public class FenceManager
         var defaultCats = GetDefaultCategories();
         foreach(var ec in defaultCats.Values) 
             foreach(var e in ec) allExtensions.Add(e);
+
+        var includedFiles = (config.IncludedFiles ?? "").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim());
+        var excludedFiles = (config.ExcludedFiles ?? "").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim());
             
-        var viewModel = new OthersFenceViewModel(config.Name, path, allExtensions);
+        var viewModel = new OthersFenceViewModel(config.Name, path, allExtensions, includedFiles, excludedFiles);
         viewModel.HexColor = prefs.FenceColorHex;
         viewModel.Opacity = prefs.FenceOpacity;
         
@@ -438,7 +441,9 @@ public class FenceManager
                         }
 
                         // 2. Handle Other Fences (Steal / Exclude)
+                        var changedFenceIds = new List<int>();
                         var allFences = db.Fences.ToList();
+                        
                         foreach (var other in allFences)
                         {
                             if (other.Id == id) continue;
@@ -469,14 +474,21 @@ public class FenceManager
 
                             if (changed)
                             {
-                                // Refresh UI for other fence
-                                int oid = other.Id;
-                                string oExt = other.Extensions; 
-                                Application.Current.Dispatcher.Invoke(() => UpdateFenceRules(oid, oExt));
+                                changedFenceIds.Add(other.Id);
                             }
                         }
 
                         db.SaveChanges();
+                        
+                        // Refrescar UI del fence actual
+                         Application.Current.Dispatcher.Invoke(() => UpdateFenceRules(id, fence.Extensions));
+
+                        // Refrescar UI de otros fences afectados
+                        foreach (var oid in changedFenceIds)
+                        {
+                            var oFence = allFences.First(f => f.Id == oid);
+                            Application.Current.Dispatcher.Invoke(() => UpdateFenceRules(oid, oFence.Extensions));
+                        }
                         
                         // Refresh Current UI
                         Application.Current.Dispatcher.Invoke(() => UpdateFenceRules(id, fence.Extensions));
