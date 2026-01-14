@@ -1,0 +1,37 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- DARK THEME SEMANTICS -->
+    
+    <!-- Backgrounds -->
+    <SolidColorBrush x:Key="Bg.Primary" Color="{StaticResource Slate950}" />
+    <SolidColorBrush x:Key="Bg.Secondary" Color="{StaticResource Slate900}" /> <!-- Sidebar -->
+    <SolidColorBrush x:Key="Bg.Card" Color="{StaticResource Slate800}" />
+    <SolidColorBrush x:Key="Bg.Card.Hover" Color="{StaticResource Slate700}" />
+    <SolidColorBrush x:Key="Bg.Input" Color="{StaticResource Slate900}" />
+    
+    <!-- Text -->
+    <SolidColorBrush x:Key="Text.Primary" Color="{StaticResource Slate100}" />
+    <SolidColorBrush x:Key="Text.Secondary" Color="{StaticResource Slate400}" />
+    <SolidColorBrush x:Key="Text.Muted" Color="{StaticResource Slate500}" />
+    <SolidColorBrush x:Key="Text.Inverted" Color="{StaticResource Slate900}" />
+
+    <!-- Borders -->
+    <SolidColorBrush x:Key="Border.Light" Color="{StaticResource Slate700}" />
+    <SolidColorBrush x:Key="Border.Input" Color="{StaticResource Slate600}" />
+    
+    <!-- Brand -->
+    <SolidColorBrush x:Key="Brand.Primary" Color="{StaticResource Blue500}" />
+    <SolidColorBrush x:Key="Brand.Primary.Hover" Color="{StaticResource Blue600}" />
+    <SolidColorBrush x:Key="Brand.Bg" Color="{StaticResource Slate800}" /> <!-- Adjusted for dark mode -->
+    <SolidColorBrush x:Key="Brand.Text" Color="{StaticResource Blue100}" />
+
+    <!-- Status -->
+    <SolidColorBrush x:Key="Status.Error" Color="{StaticResource Red500}" />
+    <SolidColorBrush x:Key="Status.Success" Color="{StaticResource Green500}" />
+
+    <!-- Shadows/Effects -->
+    <Color x:Key="Shadow.Color">#000000</Color>
+    <SolidColorBrush x:Key="Overlay.Dim" Color="#CC000000" />
+
+</ResourceDictionary>

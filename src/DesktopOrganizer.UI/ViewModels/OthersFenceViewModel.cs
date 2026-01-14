@@ -23,10 +23,10 @@ public class OthersFenceViewModel : FenceViewModel
 
     private void LoadOtherFiles()
     {
-        var folderPath = GetFolderPath();
-        if (!Directory.Exists(folderPath)) return;
+        // Use protected field directly
+        if (!Directory.Exists(_folderPath)) return;
 
-        var files = Directory.GetFiles(folderPath);
+        var files = Directory.GetFiles(_folderPath);
         
         Application.Current.Dispatcher.Invoke(() =>
         {
@@ -43,7 +43,6 @@ public class OthersFenceViewModel : FenceViewModel
                 bool isIncluded = _includedFiles.Contains(fileName);
                 
                 // 3. Check "Others" Logic (Not in excluded extensions)
-                // Include files that DON'T match any known extension OR are explicitly included
                 if (isIncluded || !_excludeExtensions.Contains(ext))
                 {
                     Files.Add(new FileItemViewModel
@@ -56,7 +55,7 @@ public class OthersFenceViewModel : FenceViewModel
             }
             
             // Also include directories (folders on desktop)
-            var directories = Directory.GetDirectories(folderPath);
+            var directories = Directory.GetDirectories(_folderPath);
             foreach (var dir in directories)
             {
                 var dirName = Path.GetFileName(dir);
@@ -75,27 +74,9 @@ public class OthersFenceViewModel : FenceViewModel
         });
     }
 
-    private string GetFolderPath()
-    {
-        // Use reflection to get the private _folderPath field
-        var field = typeof(FenceViewModel).GetField("_folderPath", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        return field?.GetValue(this) as string ?? Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-    }
-
     private void OnFilesChanged()
     {
-        // Trigger the FilesChanged event through base class
-        var property = typeof(FenceViewModel).GetProperty("HasFiles");
-        if (property != null)
-        {
-            OnPropertyChanged(nameof(HasFiles));
-            OnPropertyChanged(nameof(IsEmpty));
-        }
-    }
-
-    protected new void OnPropertyChanged(string propertyName)
-    {
-        base.OnPropertyChanged(propertyName);
+        OnPropertyChanged(nameof(HasFiles));
+        OnPropertyChanged(nameof(IsEmpty));
     }
 }

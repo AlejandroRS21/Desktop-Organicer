@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.UI\obj\Debug\net10.0-windows\
 DesktopOrganizer.UI
 none
 false
 TRACE;DEBUG;NET;NET10_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NET10_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.UI\App.xaml
-5-70861625
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.UI\App.xaml
+91116688296
 11413424753
-22-1772538748
-2462013399108
-Views\FenceWindow.xaml;Views\LogsView.xaml;Views\MainWindow.xaml;Views\RuleEditorView.xaml;Views\SettingsView.xaml;
+241125124579
+2471792663901
+Resources\Colors.xaml;Resources\Styles.xaml;Resources\Themes\Dark.xaml;Resources\Themes\Light.xaml;Views\FenceWindow.xaml;Views\LogsView.xaml;Views\MainWindow.xaml;Views\RuleEditorView.xaml;Views\SettingsView.xaml;
 
 False
 

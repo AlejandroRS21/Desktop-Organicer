@@ -11,6 +11,9 @@ public class UserPreferences
     public double FenceOpacity { get; set; } = 0.6;
     public string FenceColorHex { get; set; } = "#1E293B"; // Dark Slate
     public bool EnableFenceBlur { get; set; } = true;
+    
+    // Theme: 0 = Light, 1 = Dark
+    public int ThemeMode { get; set; } = 0;
 
     // Initialization flag to distinguish first run from "all deleted"
     public bool IsFirstRun { get; set; } = true;

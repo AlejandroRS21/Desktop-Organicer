@@ -6,15 +6,17 @@
              Exit="OnExit">
     <Application.Resources>
          <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Themes/Light.xaml" />
+                <ResourceDictionary Source="Resources/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
             <!-- Converters -->
-            <local:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
-            <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility"/>
-            
-            <!-- Global Colors -->
-            <SolidColorBrush x:Key="PrimaryColor" Color="#4A90E2"/>
-            <SolidColorBrush x:Key="AccentColor" Color="#50E3C2"/>
-            <SolidColorBrush x:Key="DarkBackground" Color="#1E293B"/>
-            <SolidColorBrush x:Key="LightText" Color="#F8FAFC"/>
+            <!-- Converters -->
+            <local:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <local:InverseBoolToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+            <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
          </ResourceDictionary>
     </Application.Resources>
 </Application>

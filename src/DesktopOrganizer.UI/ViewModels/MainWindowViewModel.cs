@@ -7,10 +7,13 @@ using DesktopOrganizer.Core.Interfaces;
 using DesktopOrganizer.Core.Services;
 using DesktopOrganizer.Core.Models;
 using DesktopOrganizer.UI.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Threading.Tasks;
 
 namespace DesktopOrganizer.UI.ViewModels;
 
-public class MainWindowViewModel : INotifyPropertyChanged
+public partial class MainWindowViewModel : ObservableObject
 {
     private readonly IFileWatcher _fileWatcher;
     private readonly FileOrganizer _fileOrganizer;
@@ -19,54 +22,19 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private readonly System.Func<SettingsView> _settingsViewFactory;
     private readonly IRepository<UserPreferences> _prefsRepository;
     
+    [ObservableProperty]
     private string _statusMessage = "Ready";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(StartStopButtonText))]
     private bool _isMonitoring;
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    public string StatusMessage
-    {
-        get => _statusMessage;
-        set
-        {
-            _statusMessage = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public bool IsMonitoring
-    {
-        get => _isMonitoring;
-        set
-        {
-            _isMonitoring = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(StartStopButtonText));
-        }
-    }
 
     public string StartStopButtonText => IsMonitoring ? "Stop Monitoring" : "Start Monitoring";
 
-    public ICommand ToggleMonitoringCommand { get; }
-    public ICommand OpenRuleEditorCommand { get; }
-    public ICommand OpenLogsCommand { get; }
-    public ICommand OpenSettingsCommand { get; }
-    public ICommand SortDesktopCommand { get; }
-
+    [ObservableProperty]
     private ObservableCollection<FenceConfiguration> _fences;
+
     private readonly DesktopOrganizer.UI.Services.FenceManager _fenceManager;
-
-    public ObservableCollection<FenceConfiguration> Fences
-    {
-        get => _fences;
-        set
-        {
-            _fences = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public ICommand SaveRulesCommand { get; }
 
     public MainWindowViewModel(
         IFileWatcher fileWatcher, 
@@ -85,13 +53,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         _prefsRepository = prefsRepository;
         _fenceManager = fenceManager;
         
-        ToggleMonitoringCommand = new RelayCommand(ToggleMonitoring);
-        OpenRuleEditorCommand = new RelayCommand(OpenRuleEditor);
-        OpenLogsCommand = new RelayCommand(OpenLogs);
-        OpenSettingsCommand = new RelayCommand(OpenSettings);
-        SaveRulesCommand = new RelayCommand(SaveFenceRules);
-        SortDesktopCommand = new RelayCommand(SortDesktop);
-        
         // Subscribe to events
         _fileWatcher.FileCreated += OnFileDetected;
         _fenceManager.FencesUpdated += () => System.Windows.Application.Current.Dispatcher.Invoke(InitializeAsync);
@@ -100,27 +61,31 @@ public class MainWindowViewModel : INotifyPropertyChanged
         InitializeAsync();
     }
 
-    private void OpenRuleEditor(object? parameter)
+    [RelayCommand]
+    private void OpenRuleEditor()
     {
         var ruleEditor = _ruleEditorFactory();
         ruleEditor.Show();
     }
 
-    private void OpenLogs(object? parameter)
+    [RelayCommand]
+    private void OpenLogs()
     {
         var logsView = _logsViewFactory();
         logsView.Show();
     }
 
-    private void OpenSettings(object? parameter)
+    [RelayCommand]
+    private void OpenSettings()
     {
         var settingsView = _settingsViewFactory();
         settingsView.Show();
     }
 
-    private void SaveFenceRules(object? parameter)
+    [RelayCommand]
+    private void SaveRules(FenceConfiguration fence)
     {
-        if (parameter is FenceConfiguration fence)
+        if (fence != null)
         {
             try
             {
@@ -134,7 +99,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    private async void SortDesktop(object? parameter)
+    [RelayCommand]
+    private async Task SortDesktop()
     {
         try
         {
@@ -181,7 +147,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    private async void ToggleMonitoring(object? parameter)
+    [RelayCommand]
+    private async Task ToggleMonitoring()
     {
         if (IsMonitoring)
         {
@@ -223,38 +190,5 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         StatusMessage = $"Detected new file: {System.IO.Path.GetFileName(filePath)}";
         await _fileOrganizer.OrganizeFileAsync(filePath);
-    }
-
-    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-}
-
-// Simple RelayCommand implementation
-public class RelayCommand : ICommand
-{
-    private readonly System.Action<object?> _execute;
-    private readonly System.Func<object?, bool>? _canExecute;
-
-    public RelayCommand(System.Action<object?> execute, System.Func<object?, bool>? canExecute = null)
-    {
-        _execute = execute;
-        _canExecute = canExecute;
-    }
-
-    public bool CanExecute(object? parameter) => _canExecute == null || _canExecute(parameter);
-
-    public void Execute(object? parameter) => _execute(parameter);
-
-    public event System.EventHandler? CanExecuteChanged
-    {
-        add { CommandManager.RequerySuggested += value; }
-        remove { CommandManager.RequerySuggested -= value; }
-    }
-
-    public void RaiseCanExecuteChanged()
-    {
-        CommandManager.InvalidateRequerySuggested();
     }
 }

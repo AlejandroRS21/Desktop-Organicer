@@ -16,3 +16,21 @@ D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\refin
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.pdb
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.genruntimeconfig.cache
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\ref\DesktopOrganizer.Data.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Data.deps.json
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Data.runtimeconfig.json
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Data.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Data.pdb
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Core.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\bin\Debug\net10.0\DesktopOrganizer.Core.pdb
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.csproj.AssemblyReference.cache
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.AssemblyInfoInputs.cache
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.AssemblyInfo.cs
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.csproj.CoreCompileInputs.cache
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.sourcelink.json
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopO.CCE044A9.Up2Date
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\refint\DesktopOrganizer.Data.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.pdb
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\DesktopOrganizer.Data.genruntimeconfig.cache
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Data\obj\Debug\net10.0\ref\DesktopOrganizer.Data.dll

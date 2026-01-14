@@ -90,6 +90,7 @@ public partial class App : Application
         
         // Register FenceManager
         services.AddSingleton<DesktopOrganizer.UI.Services.FenceManager>();
+        services.AddSingleton<DesktopOrganizer.UI.Services.ThemeManager>();
 
         // ViewModels
         services.AddTransient<MainWindowViewModel>();
@@ -171,69 +172,10 @@ public partial class App : Application
                 
                 context.Database.EnsureCreated();
                 
-                if (!context.Rules.Any())
-                {
-                    var defaultRules = new[]
-                    {
-                        new DesktopOrganizer.Core.Models.Rule
-                        {
-                            Name = "Documentos",
-                            Priority = 1,
-                            IsActive = true,
-                            TargetCategory = "Documentos",
-                            RuleType = "ExtensionRule",
-                            Configuration = "[\".pdf\", \".doc\", \".docx\", \".txt\", \".xlsx\", \".xls\", \".ppt\", \".pptx\"]"
-                        },
-                        new DesktopOrganizer.Core.Models.Rule
-                        {
-                            Name = "Imágenes",
-                            Priority = 2,
-                            IsActive = true,
-                            TargetCategory = "Imagenes",
-                            RuleType = "ExtensionRule",
-                            Configuration = "[\".jpg\", \".jpeg\", \".png\", \".gif\", \".bmp\", \".svg\", \".webp\"]"
-                        },
-                        new DesktopOrganizer.Core.Models.Rule
-                        {
-                            Name = "Videos",
-                            Priority = 3,
-                            IsActive = true,
-                            TargetCategory = "Videos",
-                            RuleType = "ExtensionRule",
-                            Configuration = "[\".mp4\", \".avi\", \".mkv\", \".mov\", \".wmv\", \".flv\"]"
-                        },
-                        new DesktopOrganizer.Core.Models.Rule
-                        {
-                            Name = "Música",
-                            Priority = 4,
-                            IsActive = true,
-                            TargetCategory = "Musica",
-                            RuleType = "ExtensionRule",
-                            Configuration = "[\".mp3\", \".wav\", \".flac\", \".aac\", \".ogg\", \".m4a\"]"
-                        },
-                        new DesktopOrganizer.Core.Models.Rule
-                        {
-                            Name = "Aplicaciones",
-                            Priority = 5,
-                            IsActive = true,
-                            TargetCategory = "Aplicaciones",
-                            RuleType = "ExtensionRule",
-                            Configuration = "[\".exe\", \".msi\", \".dmg\", \".app\"]"
-                        },
-                        new DesktopOrganizer.Core.Models.Rule
-                        {
-                            Name = "Comprimidos",
-                            Priority = 6,
-                            IsActive = true,
-                            TargetCategory = "Comprimidos",
-                            RuleType = "ExtensionRule",
-                            Configuration = "[\".zip\", \".rar\", \".7z\", \".tar\", \".gz\"]"
-                        }
-                    };
-                    
-                    context.Rules.AddRange(defaultRules);
-                    context.SaveChanges();
-                }
+                context.Database.EnsureCreated();
+                
+                // NO DEFAULT RULES are seeded intentionally.
+                // User must create them manually or via templates.
             }
 
             // Initialize Fences

@@ -6,64 +6,9 @@
         xmlns:local="clr-namespace:DesktopOrganizer.UI.Views"
         mc:Ignorable="d"
         Title="Desktop Organizer" Height="600" Width="900"
-        Background="#F5F7FA"
+        Background="{DynamicResource Bg.Primary}"
         WindowStartupLocation="CenterScreen">
     
-    <Window.Resources>
-        <!-- Modern Button Style -->
-        <Style x:Key="ModernButton" TargetType="Button">
-            <Setter Property="Background" Value="#4A90E2"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="20,12"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" 
-                                CornerRadius="8"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#357ABD"/>
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#2868A6"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <!-- Secondary Button Style -->
-        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
-            <Setter Property="Background" Value="#E8EDF3"/>
-            <Setter Property="Foreground" Value="#4A5568"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#D1DAE6"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <!-- Card Style -->
-        <Style x:Key="Card" TargetType="Border">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="24"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect Color="#E2E8F0" Direction="270" ShadowDepth="2" BlurRadius="12" Opacity="0.5"/>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -71,10 +16,7 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Border Background="White" Padding="30,20">
-            <Border.Effect>
-                <DropShadowEffect Color="#E2E8F0" Direction="270" ShadowDepth="1" BlurRadius="8" Opacity="0.3"/>
-            </Border.Effect>
+        <Border Background="{DynamicResource Bg.Secondary}" Padding="30,20" BorderBrush="{DynamicResource Border.Light}" BorderThickness="0,0,0,1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -82,15 +24,15 @@
                 </Grid.ColumnDefinitions>
                 
                 <!-- Logo/Icon -->
-                <Ellipse Width="50" Height="50" Fill="#4A90E2" Margin="0,0,15,0">
+                <Ellipse Width="50" Height="50" Fill="{DynamicResource Brand.Primary}" Margin="0,0,15,0">
                     <Ellipse.Effect>
-                        <DropShadowEffect Color="#4A90E2" BlurRadius="10" Opacity="0.3"/>
+                        <DropShadowEffect Color="{DynamicResource Shadow.Color}" BlurRadius="10" Opacity="0.2"/>
                     </Ellipse.Effect>
                 </Ellipse>
                 
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="Desktop Organizer" FontSize="28" FontWeight="Bold" Foreground="#2D3748"/>
-                    <TextBlock Text="Mantén tu escritorio ordenado automáticamente" FontSize="13" Foreground="#718096" Margin="0,2,0,0"/>
+                    <TextBlock Text="Desktop Organizer" Style="{DynamicResource Text.Header}"/>
+                    <TextBlock Text="Mantén tu escritorio ordenado automáticamente" Style="{DynamicResource Text.Caption}" FontSize="13" Margin="0,2,0,0"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -104,7 +46,7 @@
             </Grid.RowDefinitions>
 
             <!-- Status Card -->
-            <Border Style="{StaticResource Card}" Margin="0,0,0,20">
+            <Border Style="{DynamicResource Card}" Margin="0,0,0,20">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -116,10 +58,10 @@
                     <Ellipse Width="12" Height="12" Margin="0,0,12,0">
                         <Ellipse.Style>
                             <Style TargetType="Ellipse">
-                                <Setter Property="Fill" Value="#48BB78"/>
+                                <Setter Property="Fill" Value="{DynamicResource Status.Success}"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsMonitoring}" Value="False">
-                                        <Setter Property="Fill" Value="#CBD5E0"/>
+                                        <Setter Property="Fill" Value="{DynamicResource Text.Muted}"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -127,11 +69,11 @@
                     </Ellipse>
 
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding StatusMessage}" FontSize="15" FontWeight="SemiBold" Foreground="#2D3748"/>
+                        <TextBlock Text="{Binding StatusMessage}" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource Text.Primary}"/>
                         <TextBlock Text="El monitoreo está activo y organizando archivos automáticamente" 
-                                   FontSize="12" Foreground="#718096" Margin="0,4,0,0">
+                                   Margin="0,4,0,0">
                             <TextBlock.Style>
-                                <Style TargetType="TextBlock">
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Caption}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsMonitoring}" Value="False">
                                             <Setter Property="Text" Value="Haz clic en 'Iniciar Monitoreo' para comenzar"/>
@@ -146,7 +88,6 @@
                     <Button Grid.Column="2" 
                             Content="{Binding StartStopButtonText}"
                             Command="{Binding ToggleMonitoringCommand}"
-                            Style="{StaticResource ModernButton}"
                             MinWidth="160"/>
                 </Grid>
             </Border>
@@ -160,47 +101,53 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Manage Rules Card -->
-                <Border Style="{StaticResource Card}" Margin="0,0,10,0">
+                <Border Style="{DynamicResource Card}" Margin="0,0,10,0">
                     <StackPanel>
-                        <Ellipse Width="48" Height="48" Fill="#E8F4FD" HorizontalAlignment="Left" Margin="0,0,0,12"/>
-                        <TextBlock Text="Gestionar Reglas" FontSize="16" FontWeight="SemiBold" Foreground="#2D3748" Margin="0,0,0,6"/>
-                        <TextBlock Text="Configura cómo organizar tus archivos" FontSize="12" Foreground="#718096" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <Border Width="48" Height="48" CornerRadius="24" Background="{DynamicResource Brand.Bg}" HorizontalAlignment="Left" Margin="0,0,0,12">
+                             <TextBlock Text="⚙️" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+                        </Border>
+                        <TextBlock Text="Gestionar Reglas" Style="{DynamicResource Text.SubHeader}" FontSize="16" Margin="0,0,0,6"/>
+                        <TextBlock Text="Configura cómo organizar tus archivos" Style="{DynamicResource Text.Caption}" TextWrapping="Wrap" Margin="0,0,0,16"/>
                         <Button Content="Abrir Editor" 
                                 Command="{Binding OpenRuleEditorCommand}"
-                                Style="{StaticResource SecondaryButton}"
+                                Style="{DynamicResource Button.Secondary}"
                                 HorizontalAlignment="Stretch"/>
                     </StackPanel>
                 </Border>
 
                 <!-- View Logs Card -->
-                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="5,0,5,0">
+                <Border Grid.Column="1" Style="{DynamicResource Card}" Margin="5,0,5,0">
                     <StackPanel>
-                        <Ellipse Width="48" Height="48" Fill="#FEF5E7" HorizontalAlignment="Left" Margin="0,0,0,12"/>
-                        <TextBlock Text="Ver Historial" FontSize="16" FontWeight="SemiBold" Foreground="#2D3748" Margin="0,0,0,6"/>
-                        <TextBlock Text="Revisa las operaciones realizadas" FontSize="12" Foreground="#718096" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <Border Width="48" Height="48" CornerRadius="24" Background="{DynamicResource Brand.Bg}" HorizontalAlignment="Left" Margin="0,0,0,12">
+                             <TextBlock Text="📋" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+                        </Border>
+                        <TextBlock Text="Ver Historial" Style="{DynamicResource Text.SubHeader}" FontSize="16" Margin="0,0,0,6"/>
+                        <TextBlock Text="Revisa las operaciones realizadas" Style="{DynamicResource Text.Caption}" TextWrapping="Wrap" Margin="0,0,0,16"/>
                         <Button Content="Ver Logs" 
                                 Command="{Binding OpenLogsCommand}"
-                                Style="{StaticResource SecondaryButton}"
+                                Style="{DynamicResource Button.Secondary}"
                                 HorizontalAlignment="Stretch"/>
                     </StackPanel>
                 </Border>
 
                 <!-- Settings Card -->
-                <Border Grid.Column="2" Style="{StaticResource Card}" Margin="10,0,0,0">
+                <Border Grid.Column="2" Style="{DynamicResource Card}" Margin="10,0,0,0">
                     <StackPanel>
-                        <Ellipse Width="48" Height="48" Fill="#F0FDF4" HorizontalAlignment="Left" Margin="0,0,0,12"/>
-                        <TextBlock Text="Configuración" FontSize="16" FontWeight="SemiBold" Foreground="#2D3748" Margin="0,0,0,6"/>
-                        <TextBlock Text="Ajusta las carpetas monitoreadas" FontSize="12" Foreground="#718096" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                         <Border Width="48" Height="48" CornerRadius="24" Background="{DynamicResource Brand.Bg}" HorizontalAlignment="Left" Margin="0,0,0,12">
+                             <TextBlock Text="🔧" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+                        </Border>
+                        <TextBlock Text="Configuración" Style="{DynamicResource Text.SubHeader}" FontSize="16" Margin="0,0,0,6"/>
+                        <TextBlock Text="Ajusta las carpetas monitoreadas" Style="{DynamicResource Text.Caption}" TextWrapping="Wrap" Margin="0,0,0,16"/>
                         <Button Content="Configurar" 
                                 Command="{Binding OpenSettingsCommand}"
-                                Style="{StaticResource SecondaryButton}"
+                                Style="{DynamicResource Button.Secondary}"
                                 HorizontalAlignment="Stretch"/>
                     </StackPanel>
                 </Border>
             </Grid>
 
             <!-- Fences Management Panel -->
-            <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0,20,0,0" Background="#F7FAFC">
+            <Border Grid.Row="2" Style="{DynamicResource Card}" Margin="0,20,0,0" Background="{DynamicResource Bg.Surface.Hover}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -208,8 +155,8 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                        <TextBlock Text="📁 Fences Activos" FontSize="16" FontWeight="SemiBold" Foreground="#2D3748"/>
-                        <TextBlock Text="(Edita las extensiones para cambiar las reglas)" FontSize="12" Foreground="#718096" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        <TextBlock Text="📁 Fences Activos" Style="{DynamicResource Text.SubHeader}" FontSize="16"/>
+                        <TextBlock Text="(Edita las extensiones para cambiar las reglas)" Style="{DynamicResource Text.Caption}" VerticalAlignment="Center" Margin="10,0,0,0"/>
                     </StackPanel>
 
                     <ListBox Grid.Row="1" ItemsSource="{Binding Fences}" 
@@ -239,11 +186,11 @@
                                         <ColumnDefinition Width="80"/>
                                     </Grid.ColumnDefinitions>
                                     
-                                    <TextBlock Text="{Binding Name}" FontWeight="Medium" VerticalAlignment="Center" Foreground="#4A5568"/>
+                                    <TextBlock Text="{Binding Name}" FontWeight="Medium" VerticalAlignment="Center" Foreground="{DynamicResource Text.Primary}"/>
                                     
                                     <TextBox Grid.Column="1" Text="{Binding Extensions, UpdateSourceTrigger=PropertyChanged}" 
                                              Margin="10,0" Padding="8,4" VerticalContentAlignment="Center"
-                                             Background="White" BorderBrush="#E2E8F0" BorderThickness="1">
+                                             Background="{DynamicResource Bg.Input}" Foreground="{DynamicResource Text.Primary}" BorderBrush="{DynamicResource Border.Input}" BorderThickness="1">
                                         <TextBox.Resources>
                                             <Style TargetType="Border">
                                                 <Setter Property="CornerRadius" Value="4"/>
@@ -254,14 +201,8 @@
                                     <Button Grid.Column="2" Content="Guardar" 
                                             Command="{Binding DataContext.SaveRulesCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
                                             CommandParameter="{Binding}"
-                                            Background="#E8EDF3" Foreground="#4A5568"
-                                            BorderThickness="0" Padding="10,4"
-                                            Cursor="Hand">
-                                        <Button.Resources>
-                                            <Style TargetType="Border">
-                                                <Setter Property="CornerRadius" Value="4"/>
-                                            </Style>
-                                        </Button.Resources>
+                                            Style="{DynamicResource Button.Ghost}"
+                                            Padding="10,4">
                                     </Button>
                                 </Grid>
                             </DataTemplate>

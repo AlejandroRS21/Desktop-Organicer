@@ -12,6 +12,8 @@ public class RuleEngine
     private readonly List<IRule> _rules = new();
     private readonly IRepository<Rule> _ruleRepository;
 
+    public IReadOnlyList<IRule> Rules => _rules;
+
     public RuleEngine(IRepository<Rule> ruleRepository)
     {
         _ruleRepository = ruleRepository;

@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v10.0": {
       "DesktopOrganizer.UI/1.0.0": {
         "dependencies": {
+          "CommunityToolkit.Mvvm": "8.4.0",
           "DesktopOrganizer.Core": "1.0.0",
           "DesktopOrganizer.Data": "1.0.0",
           "DesktopOrganizer.Integration": "1.0.0",
@@ -21,6 +22,14 @@
         },
         "runtime": {
           "DesktopOrganizer.UI.dll": {}
+        }
+      },
+      "CommunityToolkit.Mvvm/8.4.0": {
+        "runtime": {
+          "lib/net8.0/CommunityToolkit.Mvvm.dll": {
+            "assemblyVersion": "8.4.0.0",
+            "fileVersion": "8.4.0.1"
+          }
         }
       },
       "Microsoft.Data.Sqlite.Core/10.0.0": {
@@ -521,6 +530,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "CommunityToolkit.Mvvm/8.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-tqVU8yc/ADO9oiTRyTnwhFN68hCwvkliMierptWOudIAvWY1mWCh5VFh+guwHJmpMwfg0J0rY+yyd5Oy7ty9Uw==",
+      "path": "communitytoolkit.mvvm/8.4.0",
+      "hashPath": "communitytoolkit.mvvm.8.4.0.nupkg.sha512"
     },
     "Microsoft.Data.Sqlite.Core/10.0.0": {
       "type": "package",

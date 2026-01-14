@@ -3618,19 +3618,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\arami Win\\.nuget\\packages\\": {}
+    "C:\\Users\\arami\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\PROYECTOS\\Desktop Organicer\\src\\DesktopOrganizer.Data\\DesktopOrganizer.Data.csproj",
+      "projectUniqueName": "C:\\Users\\arami\\Desktop\\Proyectos\\Desktop-Organicer\\src\\DesktopOrganizer.Data\\DesktopOrganizer.Data.csproj",
       "projectName": "DesktopOrganizer.Data",
-      "projectPath": "D:\\PROYECTOS\\Desktop Organicer\\src\\DesktopOrganizer.Data\\DesktopOrganizer.Data.csproj",
-      "packagesPath": "C:\\Users\\arami Win\\.nuget\\packages\\",
-      "outputPath": "D:\\PROYECTOS\\Desktop Organicer\\src\\DesktopOrganizer.Data\\obj\\",
+      "projectPath": "C:\\Users\\arami\\Desktop\\Proyectos\\Desktop-Organicer\\src\\DesktopOrganizer.Data\\DesktopOrganizer.Data.csproj",
+      "packagesPath": "C:\\Users\\arami\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\arami\\Desktop\\Proyectos\\Desktop-Organicer\\src\\DesktopOrganizer.Data\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\arami Win\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\arami\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
@@ -3642,8 +3642,8 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "D:\\PROYECTOS\\Desktop Organicer\\src\\DesktopOrganizer.Core\\DesktopOrganizer.Core.csproj": {
-              "projectPath": "D:\\PROYECTOS\\Desktop Organicer\\src\\DesktopOrganizer.Core\\DesktopOrganizer.Core.csproj"
+            "C:\\Users\\arami\\Desktop\\Proyectos\\Desktop-Organicer\\src\\DesktopOrganizer.Core\\DesktopOrganizer.Core.csproj": {
+              "projectPath": "C:\\Users\\arami\\Desktop\\Proyectos\\Desktop-Organicer\\src\\DesktopOrganizer.Core\\DesktopOrganizer.Core.csproj"
             }
           }
         }
@@ -3691,7 +3691,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

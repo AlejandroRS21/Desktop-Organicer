@@ -67,4 +67,50 @@ public class FileOrganizer
             Console.WriteLine($"Error organizing file {filePath}: {ex.Message}");
         }
     }
+    public async Task<System.Collections.Generic.List<SimulationResult>> SimulateOrganizationAsync(string directoryPath)
+    {
+        var results = new System.Collections.Generic.List<SimulationResult>();
+        if (!Directory.Exists(directoryPath)) return results;
+
+        // Ensure rules are loaded
+        if (_ruleEngine.Rules == null || !_ruleEngine.Rules.Any())
+        {
+            await LoadRulesAsync();
+        }
+
+        var files = Directory.GetFiles(directoryPath);
+        
+        await Task.Run(() =>
+        {
+            foreach (var filePath in files)
+            {
+                // Skip if hidden or system file
+                var attr = File.GetAttributes(filePath);
+                if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden || 
+                    (attr & FileAttributes.System) == FileAttributes.System)
+                    continue;
+
+                var targetCategory = _ruleEngine.EvaluateFile(filePath);
+                if (!string.IsNullOrEmpty(targetCategory))
+                {
+                    var fileName = Path.GetFileName(filePath);
+                    var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                    var destinationFolder = Path.Combine(desktopPath, targetCategory);
+                    var destinationPath = Path.Combine(destinationFolder, fileName);
+                    
+                    results.Add(new SimulationResult
+                    {
+                        FileName = fileName,
+                        OriginalPath = filePath,
+                        TargetPath = destinationPath,
+                        TargetCategory = targetCategory,
+                        MatchedRule = targetCategory, // Using category as rule indicator for now
+                        WouldMove = true
+                    });
+                }
+            }
+        });
+
+        return results;
+    }
 }

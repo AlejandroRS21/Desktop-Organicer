@@ -1377,19 +1377,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\arami Win\\.nuget\\packages\\": {}
+    "C:\\Users\\arami\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\PROYECTOS\\Desktop Organicer\\tests\\DesktopOrganizer.Integration.Tests\\DesktopOrganizer.Integration.Tests.csproj",
+      "projectUniqueName": "C:\\Users\\arami\\Desktop\\Proyectos\\Desktop-Organicer\\tests\\DesktopOrganizer.Integration.Tests\\DesktopOrganizer.Integration.Tests.csproj",
       "projectName": "DesktopOrganizer.Integration.Tests",
-      "projectPath": "D:\\PROYECTOS\\Desktop Organicer\\tests\\DesktopOrganizer.Integration.Tests\\DesktopOrganizer.Integration.Tests.csproj",
-      "packagesPath": "C:\\Users\\arami Win\\.nuget\\packages\\",
-      "outputPath": "D:\\PROYECTOS\\Desktop Organicer\\tests\\DesktopOrganizer.Integration.Tests\\obj\\",
+      "projectPath": "C:\\Users\\arami\\Desktop\\Proyectos\\Desktop-Organicer\\tests\\DesktopOrganizer.Integration.Tests\\DesktopOrganizer.Integration.Tests.csproj",
+      "packagesPath": "C:\\Users\\arami\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\arami\\Desktop\\Proyectos\\Desktop-Organicer\\tests\\DesktopOrganizer.Integration.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\arami Win\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\arami\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
@@ -1401,8 +1401,8 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "D:\\PROYECTOS\\Desktop Organicer\\src\\DesktopOrganizer.Integration\\DesktopOrganizer.Integration.csproj": {
-              "projectPath": "D:\\PROYECTOS\\Desktop Organicer\\src\\DesktopOrganizer.Integration\\DesktopOrganizer.Integration.csproj"
+            "C:\\Users\\arami\\Desktop\\Proyectos\\Desktop-Organicer\\src\\DesktopOrganizer.Integration\\DesktopOrganizer.Integration.csproj": {
+              "projectPath": "C:\\Users\\arami\\Desktop\\Proyectos\\Desktop-Organicer\\src\\DesktopOrganizer.Integration\\DesktopOrganizer.Integration.csproj"
             }
           }
         }
@@ -1464,7 +1464,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

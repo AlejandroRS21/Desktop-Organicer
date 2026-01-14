@@ -6,61 +6,45 @@ using System.Windows.Input;
 using DesktopOrganizer.Core.Interfaces;
 using DesktopOrganizer.Core.Models;
 using DesktopOrganizer.Core.Rules;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace DesktopOrganizer.UI.ViewModels;
 
-public class RuleEditorViewModel : INotifyPropertyChanged
+public partial class RuleEditorViewModel : ObservableObject
 {
     private readonly IRepository<Rule> _ruleRepository;
     private readonly DesktopOrganizer.UI.Services.FenceManager _fenceManager;
+    private readonly DesktopOrganizer.Core.Services.FileOrganizer _fileOrganizer;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(DeleteRuleCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SaveRuleCommand))]
     private Rule? _selectedRule;
+
+    [ObservableProperty]
     private string _statusMessage = "";
 
+    [ObservableProperty]
+    private string _simulationDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+
     public ObservableCollection<Rule> Rules { get; } = new();
+    public ObservableCollection<SimulationResult> SimulationResults { get; } = new();
 
-    public Rule? SelectedRule
-    {
-        get => _selectedRule;
-        set
-        {
-            _selectedRule = value;
-            OnPropertyChanged();
-            (DeleteRuleCommand as RelayCommand)?.RaiseCanExecuteChanged();
-        }
-    }
-
-    public string StatusMessage
-    {
-        get => _statusMessage;
-        set
-        {
-            _statusMessage = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public ICommand LoadRulesCommand { get; }
-    public ICommand AddRuleCommand { get; }
-    public ICommand DeleteRuleCommand { get; }
-    public ICommand SaveRuleCommand { get; }
-
-    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
-
-    public RuleEditorViewModel(IRepository<Rule> ruleRepository, DesktopOrganizer.UI.Services.FenceManager fenceManager)
+    public RuleEditorViewModel(IRepository<Rule> ruleRepository, 
+                               DesktopOrganizer.UI.Services.FenceManager fenceManager,
+                               DesktopOrganizer.Core.Services.FileOrganizer fileOrganizer)
     {
         _ruleRepository = ruleRepository;
         _fenceManager = fenceManager;
-
-        LoadRulesCommand = new RelayCommand(async _ => await LoadRulesAsync());
-        AddRuleCommand = new RelayCommand(async _ => await AddRuleAsync());
-        DeleteRuleCommand = new RelayCommand(async _ => await DeleteRuleAsync(), _ => SelectedRule != null);
-        SaveRuleCommand = new RelayCommand(async _ => await SaveRulesAsync());
+        _fileOrganizer = fileOrganizer;
 
         // Initial load
-        _ = LoadRulesAsync();
+        _ = LoadRules();
     }
 
-    private async Task LoadRulesAsync()
+    [RelayCommand]
+    private async Task LoadRules()
     {
         StatusMessage = "Loading rules...";
         Rules.Clear();
@@ -70,21 +54,12 @@ public class RuleEditorViewModel : INotifyPropertyChanged
         foreach (var rule in rules)
         {
             // Filter: Only show rules that correspond to an active fence
-            // This prevents "Ghost Fences" (rules for deleted fences) from appearing
-            
             bool hasMatchingFence = fences.Any(f => 
-                // Check exact name match
                 f.Name == rule.Name || 
-                // Check if fence name contains rule name (handles emojis like "🎵 Música" vs "Música")
                 f.Name.Contains(rule.Name) ||
-                // Check internal category match
                 f.Category == rule.TargetCategory
             );
 
-            // If it's a "System" rule that organizes files, maybe we still want it?
-            // User specially complained about "musica y comprimidos que ya eliminé".
-            // So if they deleted the fence, they want the rule gone/hidden.
-            
             if (hasMatchingFence)
             {
                 Rules.Add(rule);
@@ -93,7 +68,34 @@ public class RuleEditorViewModel : INotifyPropertyChanged
         StatusMessage = "Rules loaded (Synced with Fences).";
     }
 
-    private async Task AddRuleAsync()
+    [RelayCommand]
+    private async Task SimulateRules()
+    {
+        if (string.IsNullOrEmpty(SimulationDirectory) || !System.IO.Directory.Exists(SimulationDirectory))
+        {
+            StatusMessage = "Directorio de simulación inválido.";
+            return;
+        }
+
+        StatusMessage = "Simulando organización...";
+        try
+        {
+            var results = await _fileOrganizer.SimulateOrganizationAsync(SimulationDirectory);
+            SimulationResults.Clear();
+            foreach (var result in results)
+            {
+                SimulationResults.Add(result);
+            }
+            StatusMessage = $"Simulación completada. {results.Count} archivos coinciden con las reglas.";
+        }
+        catch (System.Exception ex)
+        {
+            StatusMessage = $"Error en simulación: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private async Task AddRule()
     {
         var newRule = new Rule
         {
@@ -111,7 +113,10 @@ public class RuleEditorViewModel : INotifyPropertyChanged
         StatusMessage = "New rule added.";
     }
 
-    private async Task DeleteRuleAsync()
+    private bool CanModifyRule => SelectedRule != null;
+
+    [RelayCommand(CanExecute = nameof(CanModifyRule))]
+    private async Task DeleteRule()
     {
         if (SelectedRule == null) return;
 
@@ -121,17 +126,13 @@ public class RuleEditorViewModel : INotifyPropertyChanged
         StatusMessage = "Rule deleted.";
     }
 
-    private async Task SaveRulesAsync()
+    [RelayCommand(CanExecute = nameof(CanModifyRule))]
+    private async Task SaveRule()
     {
         if (SelectedRule != null)
         {
             await _ruleRepository.UpdateAsync(SelectedRule);
             StatusMessage = "Rule saved.";
         }
-    }
-
-    protected void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
     }
 }

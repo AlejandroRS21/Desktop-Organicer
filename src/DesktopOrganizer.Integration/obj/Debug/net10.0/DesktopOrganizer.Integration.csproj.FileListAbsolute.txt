@@ -14,3 +14,19 @@ D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\refint\DesktopOrganizer.Integration.dll
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\DesktopOrganizer.Integration.pdb
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\ref\DesktopOrganizer.Integration.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\bin\Debug\net10.0\DesktopOrganizer.Integration.deps.json
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\bin\Debug\net10.0\DesktopOrganizer.Integration.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\bin\Debug\net10.0\DesktopOrganizer.Integration.pdb
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\bin\Debug\net10.0\DesktopOrganizer.Core.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\bin\Debug\net10.0\DesktopOrganizer.Core.pdb
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\DesktopOrganizer.Integration.csproj.AssemblyReference.cache
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\DesktopOrganizer.Integration.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\DesktopOrganizer.Integration.AssemblyInfoInputs.cache
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\DesktopOrganizer.Integration.AssemblyInfo.cs
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\DesktopOrganizer.Integration.csproj.CoreCompileInputs.cache
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\DesktopOrganizer.Integration.sourcelink.json
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\DesktopO.D1F980AA.Up2Date
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\DesktopOrganizer.Integration.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\refint\DesktopOrganizer.Integration.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\DesktopOrganizer.Integration.pdb
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Integration\obj\Debug\net10.0\ref\DesktopOrganizer.Integration.dll

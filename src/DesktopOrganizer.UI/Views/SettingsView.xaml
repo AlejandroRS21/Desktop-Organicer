@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         Title="Desktop Organizer - Configuración" Height="600" Width="800"
         WindowStartupLocation="CenterScreen"
-        Background="#F8FAFC"
+        Background="{DynamicResource Bg.Primary}"
         ResizeMode="CanResize"
         MinWidth="700" MinHeight="500"
         WindowStyle="SingleBorderWindow"
@@ -14,35 +14,39 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="180"/>
+            <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <!-- Sidebar -->
-        <Border Background="#1E293B">
+        <Border Background="{DynamicResource Bg.Secondary}" BorderBrush="{DynamicResource Border.Light}" BorderThickness="0,0,1,0">
             <StackPanel Margin="0,30">
                 <!-- Logo/Title -->
-                <TextBlock Text="🗂️ Desktop" FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                <TextBlock Text="Organizer" FontSize="14" Foreground="#94A3B8" HorizontalAlignment="Center" Margin="0,0,0,30"/>
+                <TextBlock Text="🗂️ Desktop" Style="{DynamicResource Text.Header}" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                <TextBlock Text="Organizer" Style="{DynamicResource Text.Caption}" FontSize="14" HorizontalAlignment="Center" Margin="0,0,0,30"/>
                 
-                <Border Height="1" Background="#334155" Margin="20,0,20,20"/>
+                <Border Height="1" Background="{DynamicResource Border.Light}" Margin="20,0,20,20"/>
                 
-                <TextBlock Text="AJUSTES" FontSize="11" FontWeight="Bold" Foreground="#64748B" Margin="20,0,0,10"/>
+                <TextBlock Text="AJUSTES" Style="{DynamicResource Text.Caption}" FontWeight="Bold" Margin="20,0,0,10"/>
                 
                 <!-- Menu Items as Radio Buttons -->
                 <RadioButton x:Name="TabPersonalization" GroupName="Tabs" IsChecked="True" Checked="Tab_Checked">
                     <RadioButton.Template>
                         <ControlTemplate TargetType="RadioButton">
-                            <Border x:Name="bg" Background="Transparent" Padding="15,12" Margin="10,2" Cursor="Hand">
+                            <Border x:Name="bg" Background="Transparent" Padding="20,12" Margin="10,2" CornerRadius="6" Cursor="Hand">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="🎨" FontSize="14" Margin="0,0,10,0"/>
-                                    <TextBlock x:Name="txt" Text="Personalización" Foreground="#94A3B8" FontSize="13"/>
+                                    <TextBlock Text="🎨" FontSize="16" Margin="0,0,10,0"/>
+                                    <TextBlock x:Name="txt" Text="Personalización" Foreground="{DynamicResource Text.Secondary}" FontSize="14"/>
                                 </StackPanel>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsChecked" Value="True">
-                                    <Setter TargetName="bg" Property="Background" Value="#334155"/>
-                                    <Setter TargetName="txt" Property="Foreground" Value="White"/>
+                                    <Setter TargetName="bg" Property="Background" Value="{DynamicResource Brand.Bg}"/>
+                                    <Setter TargetName="txt" Property="Foreground" Value="{DynamicResource Brand.Text}"/>
+                                    <Setter TargetName="txt" Property="FontWeight" Value="SemiBold"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bg" Property="Background" Value="{DynamicResource Bg.Surface.Hover}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -52,16 +56,20 @@
                 <RadioButton x:Name="TabCategories" GroupName="Tabs" Checked="Tab_Checked">
                     <RadioButton.Template>
                         <ControlTemplate TargetType="RadioButton">
-                            <Border x:Name="bg" Background="Transparent" Padding="15,12" Margin="10,2" Cursor="Hand">
+                            <Border x:Name="bg" Background="Transparent" Padding="20,12" Margin="10,2" CornerRadius="6" Cursor="Hand">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="📁" FontSize="14" Margin="0,0,10,0"/>
-                                    <TextBlock x:Name="txt" Text="Categorías" Foreground="#94A3B8" FontSize="13"/>
+                                    <TextBlock Text="📋" FontSize="16" Margin="0,0,10,0"/>
+                                    <TextBlock x:Name="txt" Text="Reglas" Foreground="{DynamicResource Text.Secondary}" FontSize="14"/>
                                 </StackPanel>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsChecked" Value="True">
-                                    <Setter TargetName="bg" Property="Background" Value="#334155"/>
-                                    <Setter TargetName="txt" Property="Foreground" Value="White"/>
+                                    <Setter TargetName="bg" Property="Background" Value="{DynamicResource Brand.Bg}"/>
+                                    <Setter TargetName="txt" Property="Foreground" Value="{DynamicResource Brand.Text}"/>
+                                    <Setter TargetName="txt" Property="FontWeight" Value="SemiBold"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bg" Property="Background" Value="{DynamicResource Bg.Surface.Hover}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -73,7 +81,7 @@
         <!-- Content Panels -->
         <Grid Grid.Column="1">
             <!-- Personalization Panel -->
-            <Grid x:Name="PersonalizationPanel" Margin="30">
+            <Grid x:Name="PersonalizationPanel" Margin="40">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -81,20 +89,41 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel>
-                    <TextBlock Text="Personalización de Fences" FontSize="22" FontWeight="SemiBold" Foreground="#1E293B"/>
-                    <TextBlock Text="Los cambios se aplican en tiempo real" FontSize="13" Foreground="#10B981" Margin="0,5,0,0"/>
+                    <TextBlock Text="Personalización" Style="{DynamicResource Text.Header}"/>
+                    <TextBlock Text="Personaliza la apariencia de tus Fences y de la aplicación." Style="{DynamicResource Text.SubHeader}" FontSize="14" Margin="0,5,0,0"/>
                 </StackPanel>
 
                 <ScrollViewer Grid.Row="1" Margin="0,25,0,0" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
-                        <!-- Card: Opacity -->
-                        <Border Background="White" CornerRadius="8" Padding="20" Margin="0,0,0,15">
-                            <Border.Effect>
-                                <DropShadowEffect Color="#000000" BlurRadius="10" Opacity="0.05" ShadowDepth="2"/>
-                            </Border.Effect>
+                        
+                        <!-- Card: App Theme -->
+                        <Border Style="{DynamicResource Card}" Margin="0,0,0,20">
                             <StackPanel>
-                                <TextBlock Text="Opacidad del Fondo" FontWeight="SemiBold" FontSize="14" Foreground="#1E293B"/>
-                                <TextBlock Text="Controla la transparencia del área de contenido" FontSize="12" Foreground="#64748B" Margin="0,2,0,15"/>
+                                <TextBlock Text="Tema de la Aplicación" Style="{DynamicResource Text.SubHeader}" FontSize="16"/>
+                                <TextBlock Text="Elige entre modo claro u oscuro" Style="{DynamicResource Text.Caption}" Margin="0,2,0,15"/>
+                                
+                                <ComboBox SelectedIndex="{Binding ThemeMode}" Width="200" HorizontalAlignment="Left" Padding="10,8" 
+                                          Background="{DynamicResource Bg.Input}" 
+                                          Foreground="{DynamicResource Text.Primary}" 
+                                          BorderBrush="{DynamicResource Border.Input}">
+                                    <ComboBox.Resources>
+                                        <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="Transparent" />
+                                        <Style TargetType="ComboBoxItem">
+                                            <Setter Property="Background" Value="{DynamicResource Bg.Input}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource Text.Primary}"/>
+                                        </Style>
+                                    </ComboBox.Resources>
+                                    <ComboBoxItem Content="☀️  Claro"/>
+                                    <ComboBoxItem Content="🌙  Oscuro"/>
+                                </ComboBox>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Card: Opacity -->
+                        <Border Style="{DynamicResource Card}" Margin="0,0,0,20">
+                            <StackPanel>
+                                <TextBlock Text="Opacidad de Fences" Style="{DynamicResource Text.SubHeader}" FontSize="16"/>
+                                <TextBlock Text="Controla la transparencia del fondo de los grupos" Style="{DynamicResource Text.Caption}" Margin="0,2,0,15"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -106,61 +135,58 @@
                                             IsSnapToTickEnabled="True" 
                                             TickFrequency="0.05"
                                             ValueChanged="Slider_ValueChanged"/>
-                                    <Border Grid.Column="1" Background="#E2E8F0" CornerRadius="4" Padding="8,4" HorizontalAlignment="Right">
-                                        <TextBlock Text="{Binding FenceOpacity, StringFormat={}{0:P0}}" FontWeight="Medium" Foreground="#1E293B"/>
+                                    <Border Grid.Column="1" Background="{DynamicResource Bg.Surface.Hover}" CornerRadius="4" Padding="8,4" HorizontalAlignment="Right">
+                                        <TextBlock Text="{Binding FenceOpacity, StringFormat={}{0:P0}}" FontWeight="Medium" Foreground="{DynamicResource Text.Primary}"/>
                                     </Border>
                                 </Grid>
                             </StackPanel>
                         </Border>
 
                         <!-- Card: Color Presets -->
-                        <Border Background="White" CornerRadius="8" Padding="20" Margin="0,0,0,15">
-                            <Border.Effect>
-                                <DropShadowEffect Color="#000000" BlurRadius="10" Opacity="0.05" ShadowDepth="2"/>
-                            </Border.Effect>
+                        <Border Style="{DynamicResource Card}" Margin="0,0,0,20">
                             <StackPanel>
-                                <TextBlock Text="Color del Fondo" FontWeight="SemiBold" FontSize="14" Foreground="#1E293B"/>
-                                <TextBlock Text="Elige un color predefinido o introduce uno personalizado" FontSize="12" Foreground="#64748B" Margin="0,2,0,15"/>
+                                <TextBlock Text="Color de Fences" Style="{DynamicResource Text.SubHeader}" FontSize="16"/>
+                                <TextBlock Text="Elige un color para el fondo de los grupos" Style="{DynamicResource Text.Caption}" Margin="0,2,0,15"/>
                                 
                                 <WrapPanel>
                                     <Button Click="ColorPreset_Click" Tag="#1E293B" Margin="0,0,8,8" Cursor="Hand" ToolTip="Slate">
                                         <Button.Template>
-                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#1E293B" BorderBrush="#CBD5E1" BorderThickness="2"/></ControlTemplate>
+                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#1E293B" BorderBrush="{DynamicResource Border.Light}" BorderThickness="2" ToolTip="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ToolTip}"/></ControlTemplate>
                                         </Button.Template>
                                     </Button>
                                     <Button Click="ColorPreset_Click" Tag="#0F172A" Margin="0,0,8,8" Cursor="Hand" ToolTip="Dark">
                                         <Button.Template>
-                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#0F172A" BorderBrush="#CBD5E1" BorderThickness="2"/></ControlTemplate>
+                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#0F172A" BorderBrush="{DynamicResource Border.Light}" BorderThickness="2"/></ControlTemplate>
                                         </Button.Template>
                                     </Button>
                                     <Button Click="ColorPreset_Click" Tag="#1E3A5F" Margin="0,0,8,8" Cursor="Hand" ToolTip="Navy">
                                         <Button.Template>
-                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#1E3A5F" BorderBrush="#CBD5E1" BorderThickness="2"/></ControlTemplate>
+                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#1E3A5F" BorderBrush="{DynamicResource Border.Light}" BorderThickness="2"/></ControlTemplate>
                                         </Button.Template>
                                     </Button>
                                     <Button Click="ColorPreset_Click" Tag="#7C3AED" Margin="0,0,8,8" Cursor="Hand" ToolTip="Purple">
                                         <Button.Template>
-                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#7C3AED" BorderBrush="#CBD5E1" BorderThickness="2"/></ControlTemplate>
+                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#7C3AED" BorderBrush="{DynamicResource Border.Light}" BorderThickness="2"/></ControlTemplate>
                                         </Button.Template>
                                     </Button>
                                     <Button Click="ColorPreset_Click" Tag="#059669" Margin="0,0,8,8" Cursor="Hand" ToolTip="Emerald">
                                         <Button.Template>
-                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#059669" BorderBrush="#CBD5E1" BorderThickness="2"/></ControlTemplate>
+                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#059669" BorderBrush="{DynamicResource Border.Light}" BorderThickness="2"/></ControlTemplate>
                                         </Button.Template>
                                     </Button>
                                     <Button Click="ColorPreset_Click" Tag="#DC2626" Margin="0,0,8,8" Cursor="Hand" ToolTip="Red">
                                         <Button.Template>
-                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#DC2626" BorderBrush="#CBD5E1" BorderThickness="2"/></ControlTemplate>
+                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#DC2626" BorderBrush="{DynamicResource Border.Light}" BorderThickness="2"/></ControlTemplate>
                                         </Button.Template>
                                     </Button>
                                     <Button Click="ColorPreset_Click" Tag="#EA580C" Margin="0,0,8,8" Cursor="Hand" ToolTip="Orange">
                                         <Button.Template>
-                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#EA580C" BorderBrush="#CBD5E1" BorderThickness="2"/></ControlTemplate>
+                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#EA580C" BorderBrush="{DynamicResource Border.Light}" BorderThickness="2"/></ControlTemplate>
                                         </Button.Template>
                                     </Button>
                                     <Button Click="ColorPreset_Click" Tag="#0891B2" Margin="0,0,8,8" Cursor="Hand" ToolTip="Cyan">
                                         <Button.Template>
-                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#0891B2" BorderBrush="#CBD5E1" BorderThickness="2"/></ControlTemplate>
+                                            <ControlTemplate><Border Width="40" Height="40" CornerRadius="8" Background="#0891B2" BorderBrush="{DynamicResource Border.Light}" BorderThickness="2"/></ControlTemplate>
                                         </Button.Template>
                                     </Button>
                                 </WrapPanel>
@@ -171,7 +197,7 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     
-                                    <Border Width="40" Height="40" CornerRadius="6" Margin="0,0,15,0" BorderBrush="#E2E8F0" BorderThickness="1">
+                                    <Border Width="40" Height="40" CornerRadius="6" Margin="0,0,15,0" BorderBrush="{DynamicResource Border.Light}" BorderThickness="1">
                                         <Border.Background>
                                             <SolidColorBrush Color="{Binding FenceColorHex, FallbackValue=#1E293B}"/>
                                         </Border.Background>
@@ -182,7 +208,7 @@
                                              Text="{Binding FenceColorHex, UpdateSourceTrigger=PropertyChanged}" 
                                              TextChanged="ColorInput_TextChanged"
                                              VerticalAlignment="Center" FontSize="14" Padding="10,8"
-                                             Background="#F1F5F9" BorderBrush="#E2E8F0" BorderThickness="1">
+                                             Background="{DynamicResource Bg.Input}" Foreground="{DynamicResource Text.Primary}" BorderBrush="{DynamicResource Border.Input}" BorderThickness="1">
                                         <TextBox.Resources>
                                             <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
                                         </TextBox.Resources>
@@ -202,54 +228,54 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     
-                    <TextBlock x:Name="UnsavedIndicator" Text="● Cambios sin guardar" Foreground="#F59E0B" VerticalAlignment="Center" FontWeight="Medium" Visibility="Collapsed"/>
-                    <TextBlock Grid.Column="1" Text="{Binding StatusMessage}" Foreground="#10B981" VerticalAlignment="Center" FontWeight="Medium" Margin="10,0,0,0"/>
+                    <TextBlock x:Name="UnsavedIndicator" Text="● Cambios sin guardar" Foreground="{DynamicResource Status.Error}" VerticalAlignment="Center" FontWeight="Medium" Visibility="Collapsed"/>
+                    <TextBlock Grid.Column="1" Text="{Binding StatusMessage}" Foreground="{DynamicResource Status.Success}" VerticalAlignment="Center" FontWeight="Medium" Margin="10,0,0,0"/>
                     
-                    <Button Grid.Column="2" Content="Deshacer" Click="Undo_Click" Padding="15,10" Background="#E2E8F0" Foreground="#475569" BorderThickness="0" Cursor="Hand" Margin="0,0,10,0">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="bg" Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bg" Property="Background" Value="#CBD5E1"/></Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                    <Button Grid.Column="2" Content="Deshacer" Click="Undo_Click" Style="{DynamicResource Button.Ghost}" Margin="0,0,10,0"/>
                     
-                    <Button Grid.Column="3" Content="💾  Guardar" Command="{Binding SaveCommand}" Padding="20,12" Background="#3B82F6" Foreground="White" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="bg" Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bg" Property="Background" Value="#2563EB"/></Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                    <Button Grid.Column="3" Content="💾  Guardar" Command="{Binding SavePreferencesCommand}"/>
                 </Grid>
             </Grid>
             
-            <!-- Categories Panel -->
-            <Grid x:Name="CategoriesPanel" Margin="30" Visibility="Collapsed">
+            <!-- Rules Panel -->
+            <Grid x:Name="RulesPanel" Margin="40" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel>
-                    <TextBlock Text="Categorías y Reglas" FontSize="22" FontWeight="SemiBold" Foreground="#1E293B"/>
-                    <TextBlock Text="Define qué extensiones pertenecen a cada categoría" FontSize="13" Foreground="#64748B" Margin="0,5,0,0"/>
+                    <TextBlock Text="Gestión de Reglas" Style="{DynamicResource Text.Header}"/>
+                    <TextBlock Text="Configura cómo se organizan tus archivos mediante el editor avanzado." Style="{DynamicResource Text.SubHeader}" FontSize="14" Margin="0,5,0,0"/>
                 </StackPanel>
 
-                <ScrollViewer Grid.Row="1" Margin="0,25,0,0" VerticalScrollBarVisibility="Auto">
-                    <StackPanel x:Name="CategoriesList">
-                        <!-- Categories will be populated dynamically -->
-                    </StackPanel>
-                </ScrollViewer>
+                <StackPanel Grid.Row="1" Margin="0,40,0,0">
+                    <Border Style="{DynamicResource Card}" Padding="30">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <StackPanel Margin="0,0,20,0">
+                                <TextBlock Text="⚡ Editor Avanzado de Reglas" Style="{DynamicResource Text.SubHeader}" FontWeight="SemiBold"/>
+                                <TextBlock Text="Define extensiones, patrones de nombres y categorías. Incluye modo de simulación (Dry Run) para probar tus reglas antes de aplicarlas." 
+                                           Style="{DynamicResource Text.Caption}" TextWrapping="Wrap" Margin="0,10,0,0" FontSize="14"/>
+                            </StackPanel>
+                            
+                            <Button Grid.Column="1" Content="Abrir Editor" Command="{Binding OpenRuleEditorCommand}" Height="40" FontSize="14"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{DynamicResource Card}" Padding="30" Margin="0,20,0,0">
+                        <StackPanel>
+                            <TextBlock Text="ℹ️ ¿Cómo funciona?" Style="{DynamicResource Text.SubHeader}" FontWeight="SemiBold"/>
+                            <TextBlock Text="• Las reglas se ejecutan en orden de prioridad." Style="{DynamicResource Text.Caption}" Margin="0,10,0,0"/>
+                            <TextBlock Text="• Puedes crear 'Fences' que coincidan con los nombres de las categorías." Style="{DynamicResource Text.Caption}" Margin="0,5,0,0"/>
+                            <TextBlock Text="• Usa la pestaña 'Simulación' en el editor para verificar cambios sin riesgos." Style="{DynamicResource Text.Caption}" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
             </Grid>
         </Grid>
     </Grid>

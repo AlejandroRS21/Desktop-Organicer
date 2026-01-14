@@ -10,3 +10,15 @@ D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\Deskt
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\refint\DesktopOrganizer.Core.dll
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\DesktopOrganizer.Core.pdb
 D:\PROYECTOS\Desktop Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\ref\DesktopOrganizer.Core.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Core\bin\Debug\net10.0\DesktopOrganizer.Core.deps.json
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Core\bin\Debug\net10.0\DesktopOrganizer.Core.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Core\bin\Debug\net10.0\DesktopOrganizer.Core.pdb
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\DesktopOrganizer.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\DesktopOrganizer.Core.AssemblyInfoInputs.cache
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\DesktopOrganizer.Core.AssemblyInfo.cs
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\DesktopOrganizer.Core.csproj.CoreCompileInputs.cache
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\DesktopOrganizer.Core.sourcelink.json
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\DesktopOrganizer.Core.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\refint\DesktopOrganizer.Core.dll
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\DesktopOrganizer.Core.pdb
+C:\Users\arami\Desktop\Proyectos\Desktop-Organicer\src\DesktopOrganizer.Core\obj\Debug\net10.0\ref\DesktopOrganizer.Core.dll

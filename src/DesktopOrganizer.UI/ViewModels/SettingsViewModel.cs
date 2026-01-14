@@ -4,13 +4,17 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using DesktopOrganizer.Core.Interfaces;
 using DesktopOrganizer.Core.Models;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace DesktopOrganizer.UI.ViewModels;
 
-public class SettingsViewModel : INotifyPropertyChanged
+public partial class SettingsViewModel : ObservableObject
 {
     private readonly IRepository<UserPreferences> _prefsRepository;
     private UserPreferences _preferences;
+    
+    [ObservableProperty]
     private string _statusMessage = "";
 
     public string MonitoredDirectories
@@ -18,7 +22,7 @@ public class SettingsViewModel : INotifyPropertyChanged
         get => _preferences?.MonitoredDirectories ?? "";
         set
         {
-            if (_preferences != null)
+            if (_preferences != null && _preferences.MonitoredDirectories != value)
             {
                 _preferences.MonitoredDirectories = value;
                 OnPropertyChanged();
@@ -31,7 +35,7 @@ public class SettingsViewModel : INotifyPropertyChanged
         get => _preferences?.FenceOpacity ?? 0.6;
         set
         {
-            if (_preferences != null)
+            if (_preferences != null && _preferences.FenceOpacity != value)
             {
                 _preferences.FenceOpacity = value;
                 OnPropertyChanged();
@@ -45,7 +49,7 @@ public class SettingsViewModel : INotifyPropertyChanged
         get => _preferences?.FenceColorHex ?? "#1E293B";
         set
         {
-            if (_preferences != null)
+            if (_preferences != null && _preferences.FenceColorHex != value)
             {
                 _preferences.FenceColorHex = value;
                 OnPropertyChanged();
@@ -59,7 +63,7 @@ public class SettingsViewModel : INotifyPropertyChanged
         get => _preferences?.EnableFenceBlur ?? true;
         set
         {
-            if (_preferences != null)
+            if (_preferences != null && _preferences.EnableFenceBlur != value)
             {
                 _preferences.EnableFenceBlur = value;
                 OnPropertyChanged();
@@ -67,30 +71,51 @@ public class SettingsViewModel : INotifyPropertyChanged
         }
     }
 
-    public string StatusMessage
-    {
-        get => _statusMessage;
-        set
-        {
-            _statusMessage = value;
-            OnPropertyChanged();
-        }
-    }
-    public ICommand SaveCommand { get; }
-
-    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
-
     private readonly DesktopOrganizer.UI.Services.FenceManager _fenceManager;
+    private readonly DesktopOrganizer.UI.Services.ThemeManager _themeManager;
+    private readonly System.Func<Views.RuleEditorView> _ruleEditorFactory;
 
-    public SettingsViewModel(IRepository<UserPreferences> prefsRepository, DesktopOrganizer.UI.Services.FenceManager fenceManager)
+    public SettingsViewModel(IRepository<UserPreferences> prefsRepository, 
+                             DesktopOrganizer.UI.Services.FenceManager fenceManager,
+                             DesktopOrganizer.UI.Services.ThemeManager themeManager,
+                             System.Func<Views.RuleEditorView> ruleEditorFactory)
     {
         _prefsRepository = prefsRepository;
         _fenceManager = fenceManager;
+        _themeManager = themeManager;
+        _ruleEditorFactory = ruleEditorFactory;
         _preferences = new UserPreferences(); // Default
 
-        SaveCommand = new RelayCommand(async _ => await SavePreferencesAsync());
-
         _ = LoadPreferencesAsync();
+    }
+
+    [RelayCommand]
+    private void OpenRuleEditor()
+    {
+        try
+        {
+            var window = _ruleEditorFactory();
+            window.Show();
+            window.Activate();
+        }
+        catch (System.Exception ex)
+        {
+            StatusMessage = $"Error abriendo editor: {ex.Message}";
+        }
+    }
+
+    public int ThemeMode
+    {
+        get => _preferences?.ThemeMode ?? 0;
+        set
+        {
+            if (_preferences != null && _preferences.ThemeMode != value)
+            {
+                _preferences.ThemeMode = value;
+                OnPropertyChanged();
+                _themeManager.ApplyTheme((DesktopOrganizer.UI.Services.AppTheme)value);
+            }
+        }
     }
 
     private async Task LoadPreferencesAsync()
@@ -102,7 +127,8 @@ public class SettingsViewModel : INotifyPropertyChanged
             // Create default
             prefs = new UserPreferences
             {
-                MonitoredDirectories = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop)
+                MonitoredDirectories = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop),
+                ThemeMode = 0 // Default Light
             };
             await _prefsRepository.AddAsync(prefs);
         }
@@ -112,10 +138,16 @@ public class SettingsViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(FenceOpacity));
         OnPropertyChanged(nameof(FenceColorHex));
         OnPropertyChanged(nameof(EnableFenceBlur));
+        OnPropertyChanged(nameof(ThemeMode));
+        
+        // Apply theme
+        _themeManager.ApplyTheme((DesktopOrganizer.UI.Services.AppTheme)_preferences.ThemeMode);
+        
         StatusMessage = "Configuración cargada.";
     }
 
-    private async Task SavePreferencesAsync()
+    [RelayCommand]
+    private async Task SavePreferences()
     {
         if (_preferences != null)
         {
@@ -130,10 +162,5 @@ public class SettingsViewModel : INotifyPropertyChanged
 
             StatusMessage = "Configuración guardada y Fences actualizados.";
         }
-    }
-
-    protected void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
     }
 }
