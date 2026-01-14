@@ -107,7 +107,6 @@
                                           Foreground="{DynamicResource Text.Primary}" 
                                           BorderBrush="{DynamicResource Border.Input}">
                                     <ComboBox.Resources>
-                                        <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="Transparent" />
                                         <Style TargetType="ComboBoxItem">
                                             <Setter Property="Background" Value="{DynamicResource Bg.Input}"/>
                                             <Setter Property="Foreground" Value="{DynamicResource Text.Primary}"/>

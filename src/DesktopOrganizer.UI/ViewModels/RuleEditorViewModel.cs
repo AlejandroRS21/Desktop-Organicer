@@ -8,14 +8,15 @@ using DesktopOrganizer.Core.Models;
 using DesktopOrganizer.Core.Rules;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DesktopOrganizer.Core.Services;
+using DesktopOrganizer.UI.Services;
 
 namespace DesktopOrganizer.UI.ViewModels;
 
 public partial class RuleEditorViewModel : ObservableObject
 {
     private readonly IRepository<Rule> _ruleRepository;
-    private readonly DesktopOrganizer.UI.Services.FenceManager _fenceManager;
-    private readonly DesktopOrganizer.Core.Services.FileOrganizer _fileOrganizer;
+    private readonly RuleTemplateService _templateService;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(DeleteRuleCommand))]
@@ -30,14 +31,21 @@ public partial class RuleEditorViewModel : ObservableObject
 
     public ObservableCollection<Rule> Rules { get; } = new();
     public ObservableCollection<SimulationResult> SimulationResults { get; } = new();
+    public ObservableCollection<RuleTemplate> Templates { get; } = new();
 
     public RuleEditorViewModel(IRepository<Rule> ruleRepository, 
-                               DesktopOrganizer.UI.Services.FenceManager fenceManager,
-                               DesktopOrganizer.Core.Services.FileOrganizer fileOrganizer)
+                               FenceManager fenceManager,
+                               FileOrganizer fileOrganizer,
+                               RuleTemplateService templateService)
     {
         _ruleRepository = ruleRepository;
         _fenceManager = fenceManager;
         _fileOrganizer = fileOrganizer;
+        _templateService = templateService;
+
+        // Load templates
+        var templates = _templateService.GetTemplates();
+        foreach (var t in templates) Templates.Add(t);
 
         // Initial load
         _ = LoadRules();
@@ -49,23 +57,53 @@ public partial class RuleEditorViewModel : ObservableObject
         StatusMessage = "Loading rules...";
         Rules.Clear();
         var rules = await _ruleRepository.GetAllAsync();
-        var fences = _fenceManager.GetAllFences();
-
+        
+        // We load ALL rules now. We don't filter safely by fence because we might be in Setup phase.
         foreach (var rule in rules)
         {
-            // Filter: Only show rules that correspond to an active fence
-            bool hasMatchingFence = fences.Any(f => 
-                f.Name == rule.Name || 
-                f.Name.Contains(rule.Name) ||
-                f.Category == rule.TargetCategory
-            );
+            Rules.Add(rule);
+        }
+        StatusMessage = "Rules loaded.";
+    }
 
-            if (hasMatchingFence)
+    [RelayCommand]
+    private async Task ApplyTemplate(RuleTemplate template)
+    {
+        if (template == null) return;
+
+        StatusMessage = $"Aplicando plantilla '{template.Name}'...";
+
+        // Add rules from template
+        foreach (var templateRule in template.Rules)
+        {
+            // Check if rule exists (by name) to avoid duplicates
+            var exists = Rules.Any(r => r.Name == templateRule.Name);
+            if (!exists)
             {
-                Rules.Add(rule);
+                var newRule = new Rule
+                {
+                    Name = templateRule.Name,
+                    Priority = Rules.Count + 1,
+                    IsActive = true,
+                    TargetCategory = templateRule.TargetCategory,
+                    RuleType = templateRule.RuleType,
+                    Configuration = templateRule.Configuration
+                };
+
+                await _ruleRepository.AddAsync(newRule);
+                Rules.Add(newRule);
+
+                // Ensure Fence exists for this Rule
+                // Note: This requires FenceManager to persist to DB. 
+                // Currently FenceManager seems to be in-memory or syncs on init.
+                // We'll rely on the user or a future 'Sync Fences' feature, 
+                // BUT for a good UX, we should try to add the fence now.
+                // Assuming FenceManager has an AddFence method (we should check, but if not we can't do it easily here).
+                // Ideally, MainWindow listens to Rule changes or we force a fence creation.
             }
         }
-        StatusMessage = "Rules loaded (Synced with Fences).";
+        
+        StatusMessage = $"Plantilla '{template.Name}' aplicada exitosamente.";
     }
 
     [RelayCommand]

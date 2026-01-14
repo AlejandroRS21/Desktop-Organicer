@@ -87,6 +87,7 @@ public partial class App : Application
         services.AddSingleton<IFileWatcher, FileWatcherService>();
         services.AddScoped<RuleEngine>(); 
         services.AddScoped<FileOrganizer>();
+        services.AddScoped<DesktopOrganizer.Core.Services.RuleTemplateService>(); // Added
         
         // Register FenceManager
         services.AddSingleton<DesktopOrganizer.UI.Services.FenceManager>();
@@ -169,8 +170,6 @@ public partial class App : Application
                     context.Database.EnsureDeleted();
                     context.Database.EnsureCreated();
                 }
-                
-                context.Database.EnsureCreated();
                 
                 context.Database.EnsureCreated();
                 
