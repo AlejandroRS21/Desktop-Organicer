@@ -10,6 +10,16 @@ using System.Windows.Shapes;
 using DesktopOrganizer.UI.Helpers;
 using DesktopOrganizer.UI.ViewModels;
 
+// Aliases for ambiguous types between WPF and WinForms
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using DragEventArgs = System.Windows.DragEventArgs;
+using DataFormats = System.Windows.DataFormats;
+using DragDropEffects = System.Windows.DragDropEffects;
+using DataObject = System.Windows.DataObject;
+using DragDrop = System.Windows.DragDrop;
+using MessageBox = System.Windows.MessageBox;
+
 namespace DesktopOrganizer.UI.Views;
 
 public partial class FenceWindow : Window
@@ -21,7 +31,7 @@ public partial class FenceWindow : Window
     // For resize
     private bool _isResizing = false;
     private string _resizeDirection = "";
-    private Point _resizeStartPoint;
+    private System.Windows.Point _resizeStartPoint;
     private double _startWidth;
     private double _startHeight;
     private double _startLeft;
@@ -89,8 +99,22 @@ public partial class FenceWindow : Window
         var source = PresentationSource.FromVisual(this) as HwndSource;
         source?.AddHook(WndProc);
         
+        // Hide from Alt+Tab
+        var handle = source!.Handle;
+        int exStyle = (int)GetWindowLong(handle, GWL_EXSTYLE);
+        SetWindowLong(handle, GWL_EXSTYLE, exStyle | WS_EX_TOOLWINDOW);
+        
         DesktopWindowHelper.SendToBottom(this);
     }
+    
+    private const int GWL_EXSTYLE = -20;
+    private const int WS_EX_TOOLWINDOW = 0x00000080;
+
+    [DllImport("user32.dll")]
+    private static extern int GetWindowLong(IntPtr hwnd, int index);
+
+    [DllImport("user32.dll")]
+    private static extern int SetWindowLong(IntPtr hwnd, int index, int newStyle);
 
     private const int WM_WINDOWPOSCHANGING = 0x0046;
     private const int WM_ACTIVATE = 0x0006;
@@ -186,7 +210,7 @@ public partial class FenceWindow : Window
         }
     }
 
-    private void ResizeHandle_MouseMove(object sender, MouseEventArgs e)
+    private void ResizeHandle_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
     {
         if (!_isResizing) return;
         
@@ -385,7 +409,7 @@ public partial class FenceWindow : Window
         ContextMenu_Delete(sender, e);
     }
 
-    private void File_MouseMove(object sender, MouseEventArgs e)
+    private void File_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
     {
         if (e.LeftButton == MouseButtonState.Pressed)
         {

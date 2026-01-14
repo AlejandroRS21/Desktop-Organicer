@@ -17,6 +17,8 @@ public partial class RuleEditorViewModel : ObservableObject
 {
     private readonly IRepository<Rule> _ruleRepository;
     private readonly RuleTemplateService _templateService;
+    private readonly FenceManager _fenceManager;
+    private readonly FileOrganizer _fileOrganizer;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(DeleteRuleCommand))]

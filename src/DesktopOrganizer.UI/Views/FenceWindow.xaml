@@ -11,7 +11,8 @@
         AllowsTransparency="True"
         Background="Transparent"
         ShowInTaskbar="False"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        AllowDrop="True">
 
     <!-- Context Menu -->
     <Window.ContextMenu>
@@ -172,6 +173,8 @@
                          Background="Transparent" 
                          BorderThickness="0"
                          AllowDrop="True"
+                         PreviewDragOver="Window_DragOver"
+                         PreviewDrop="Window_Drop"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ScrollViewer.VerticalScrollBarVisibility="Auto"
                          SelectionMode="Extended"

@@ -11,7 +11,7 @@ using DesktopOrganizer.UI.Helpers;
 
 namespace DesktopOrganizer.UI.Services;
 
-public class FenceManager
+public class FenceManager : IDisposable
 {
     public event Action? FencesUpdated;
 
@@ -39,8 +39,8 @@ public class FenceManager
     {
         try
         {
-            // First, show any previously hidden icons
-            _iconManager.ShowAllIcons();
+            // NEW APPROACH: Hide the entire native desktop listview window
+            _iconManager.HideDesktopListView();
             
             // Close existing fences
             foreach (var fence in _openFences.ToList())
@@ -94,6 +94,24 @@ public class FenceManager
             
             bool shouldCreateDefaults = prefs.IsFirstRun && savedFences.Count == 0;
             
+            // CLEANUP: Force remove any 'Default' or 'Others' category fences from previous runs
+            var defaultFences = savedFences.Where(f => f.Category == "Default" || f.Category == "Others").ToList();
+            if (defaultFences.Count > 0)
+            {
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+                    foreach(var df in defaultFences)
+                    {
+                        var entity = db.Fences.Find(df.Id);
+                        if(entity != null) db.Fences.Remove(entity);
+                    }
+                    db.SaveChanges();
+                }
+                // Remove from local list too
+                savedFences.RemoveAll(f => f.Category == "Default");
+            }
+
             // Safety: If fences exist but flag is true, fix the flag immediately
             if (prefs.IsFirstRun && savedFences.Count > 0)
             {
@@ -159,74 +177,8 @@ public class FenceManager
 
     private void CreateDefaultFences(string desktopPath, UserPreferences prefs)
     {
-        // Define categories and their extensions
-        var categories = GetDefaultCategories();
-        
-        // Calculate grid layout - 3 columns
-        int columns = 3;
-        double fenceWidth = 200;
-        double fenceHeight = 260;
-        double marginX = 15;
-        double marginY = 15;
-        
-        // Start from top-right corner of the work area
-        double startX = SystemParameters.WorkArea.Width - (fenceWidth * columns) - (marginX * (columns + 1));
-        double startY = marginY;
-
-        int col = 0;
-        int row = 0;
-
-        // Create fences for each category
-        foreach (var category in categories)
-        {
-            double x = startX + (col * (fenceWidth + marginX));
-            double y = startY + (row * (fenceHeight + marginY));
-            
-            var extensions = category.Value;
-            var config = new FenceConfiguration
-            {
-                Name = category.Key,
-                Left = x,
-                Top = y,
-                Width = fenceWidth,
-                Height = fenceHeight,
-                Extensions = string.Join(";", extensions),
-                Category = "Default"
-            };
-            
-            // Save to DB
-            SaveFenceToDb(config);
-            
-            // Create Window
-            CreateFenceFromConfig(config, desktopPath, prefs, extensions);
-            
-            col++;
-            if (col >= columns)
-            {
-                col = 0;
-                row++;
-            }
-        }
-        
-        // Create "Otros" fence
-        {
-            double x = startX + (col * (fenceWidth + marginX));
-            double y = startY + (row * (fenceHeight + marginY));
-            
-            var config = new FenceConfiguration
-            {
-                Name = "📁 Otros",
-                Left = x,
-                Top = y,
-                Width = fenceWidth,
-                Height = fenceHeight,
-                Extensions = "*",
-                Category = "Others"
-            };
-            
-            SaveFenceToDb(config);
-            CreateOthersFence(config, desktopPath, prefs);
-        }
+        // NO DEFAULT FENCES.
+        // User starts with a clean slate.
     }
 
     private void LoadFencesFromConfig(List<FenceConfiguration> configs, string desktopPath, UserPreferences prefs)
@@ -319,6 +271,8 @@ public class FenceManager
         if (filesToHide.Count > 0)
         {
             _iconManager.HideIcons(filesToHide);
+            // Strict enforcement: Refresh desktop to ensure visual update
+            _iconManager.RefreshDesktop();
         }
     }
 
@@ -637,10 +591,20 @@ public class FenceManager
     
     public int HiddenIconCount => _iconManager.HiddenIconCount;
 
-    /// <summary>
-    /// Creates a new custom fence at the specified position and size.
-    /// </summary>
-    public void CreateCustomFence(double left, double top, double width, double height, string? name = null)
+    private void CreateFenceFromRect(Rect bounds)
+    {
+        // 1. Identify icons in this area
+        var iconsInArea = _iconManager.GetIconsInRect(bounds);
+        
+        // 2. Ask user for Fence Name (Optional, could be just "Fence 1")
+        // For now, auto-generate unique name
+        string name = GetUniqueFenceName("Nuevo Fence");
+        
+        // 3. Create Fence
+        CreateCustomFence(bounds.Left, bounds.Top, bounds.Width, bounds.Height, name, iconsInArea);
+    }
+
+    public void CreateCustomFence(double left, double top, double width, double height, string? name = null, List<string>? initialIcons = null)
     {
         var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         
@@ -652,6 +616,11 @@ public class FenceManager
         }
 
         var fenceName = name ?? GetUniqueFenceName("Nuevo Fence");
+        
+        string includedFiles = initialIcons != null && initialIcons.Count > 0 
+            ? string.Join(";", initialIcons) 
+            : "";
+
         var config = new FenceConfiguration
         {
             Name = fenceName,
@@ -660,12 +629,23 @@ public class FenceManager
             Width = Math.Max(width, 150),
             Height = Math.Max(height, 100),
             Extensions = "",
-            Category = "Custom"
+            Category = "Custom",
+            IncludedFiles = includedFiles
         };
         
         SaveFenceToDb(config);
         CreateFenceFromConfig(config, desktopPath, prefs, Array.Empty<string>());
         FencesUpdated?.Invoke();
+        
+        // Force immediate update of hidden icons
+        Application.Current.Dispatcher.BeginInvoke(new Action(() => 
+        {
+             UpdateHiddenIcons();
+        }), System.Windows.Threading.DispatcherPriority.Background);
+    }
+    
+    public void Dispose()
+    {
     }
 
     /// <summary>
@@ -882,5 +862,50 @@ public class FenceManager
                 }
             }
         });
+    }
+
+    public FenceWindow? GetFenceWindowAtPoint(Point screenPoint)
+    {
+        foreach (var window in _openFences)
+        {
+            if (window.Visibility != Visibility.Visible) continue;
+
+            if (screenPoint.X >= window.Left && screenPoint.X <= window.Left + window.Width &&
+                screenPoint.Y >= window.Top && screenPoint.Y <= window.Top + window.Height)
+            {
+                return window;
+            }
+        }
+        return null;
+    }
+
+    public void CreateCustomFence(double x, double y, double w, double h)
+    {
+        // Use CreateFenceFromRect logic but simplified
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
+            var newFence = new DesktopOrganizer.Core.Models.Fence
+            {
+                Title = "New Fence",
+                X = x,
+                Y = y,
+                Width = w,
+                Height = h,
+                Category = "User",
+                HexColor = "#333333",
+                Opacity = 0.5,
+                Extensions = ""
+            };
+            db.Fences.Add(newFence);
+            db.SaveChanges();
+
+            var prefsRepo = scope.ServiceProvider.GetRequiredService<Core.Interfaces.IRepository<UserPreferences>>();
+            var prefs = prefsRepo.GetAllAsync().Result.FirstOrDefault() ?? new UserPreferences();
+            
+            Application.Current.Dispatcher.Invoke(() => {
+                CreateFenceFromConfig(newFence, Environment.GetFolderPath(Environment.SpecialFolder.Desktop), prefs, new string[0]);
+            });
+        }
     }
 }

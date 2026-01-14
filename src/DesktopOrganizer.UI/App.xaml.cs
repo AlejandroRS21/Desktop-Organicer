@@ -15,6 +15,8 @@ using DesktopOrganizer.UI.ViewModels;
 using DesktopOrganizer.UI.Views;
 using DesktopOrganizer.UI.Services;
 
+using Application = System.Windows.Application;
+
 namespace DesktopOrganizer.UI;
 
 public partial class App : Application
@@ -104,6 +106,7 @@ public partial class App : Application
         services.AddTransient<RuleEditorView>();
         services.AddTransient<LogsView>();
         services.AddTransient<SettingsView>();
+        services.AddSingleton<DesktopOverlayWindow>();
 
         // Factories (Scoped Window Creation)
         services.AddSingleton<Func<RuleEditorView>>(provider => () => 
@@ -194,6 +197,10 @@ public partial class App : Application
             // We don't show main window by default anymore, we let the user open it from tray
             // var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
             // mainWindow.Show();
+
+            // Show simulated desktop overlay
+            var overlay = _serviceProvider.GetRequiredService<DesktopOverlayWindow>();
+            overlay.Show();
         }
         catch (Exception ex)
         {

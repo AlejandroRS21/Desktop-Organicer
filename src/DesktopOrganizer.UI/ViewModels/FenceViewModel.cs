@@ -70,7 +70,20 @@ public partial class FenceViewModel : ObservableObject
 
                 if (_excludedFiles.Contains(fileName)) continue;
 
+                // Improved Matching Logic:
+                // Check exact match first
                 bool isIncluded = _includedFiles.Contains(fileName);
+                
+                // If not exact, check if _includedFiles contains the name WITHOUT extension (e.g. desktop shows "MyFile", real file is "MyFile.txt")
+                if (!isIncluded)
+                {
+                    string nameNoExt = Path.GetFileNameWithoutExtension(fileName);
+                    if (_includedFiles.Contains(nameNoExt))
+                    {
+                        isIncluded = true;
+                    }
+                }
+                
                 bool matchesRule = _extensions.Contains(ext);
                 
                 if (isIncluded || matchesRule)
@@ -147,26 +160,8 @@ public partial class FenceViewModel : ObservableObject
                 
                 if (!isDir && !isIncluded && !matchesRule)
                 {
-                    var result = System.Windows.MessageBox.Show(
-                        $"El archivo '{fileName}' ({ext}) no coincide con las reglas.\n\n" +
-                        "SÍ: Añadir regla para todos los " + ext + "\n" +
-                        "NO: Añadir SOLO este archivo", 
-                        "Añadir Archivo", 
-                        System.Windows.MessageBoxButton.YesNoCancel, 
-                        System.Windows.MessageBoxImage.Question);
-                        
-                    if (result == System.Windows.MessageBoxResult.Yes)
-                    {
-                        RequestRuleUpdate?.Invoke(Id, ext);
-                    }
-                    else if (result == System.Windows.MessageBoxResult.No)
-                    {
-                        RequestInclusionUpdate?.Invoke(Id, fileName);
-                    }
-                    else
-                    {
-                        continue;
-                    }
+                    // USER REQUEST: Don't ask for rules, just include the file
+                    RequestInclusionUpdate?.Invoke(Id, fileName);
                 }
 
                 if (string.Equals(file, destPath, StringComparison.OrdinalIgnoreCase))
@@ -192,7 +187,7 @@ public partial class FenceViewModel : ObservableObject
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error moving file: {ex.Message}");
+                System.Windows.MessageBox.Show($"Error moving file: {ex.Message}", "Error al mover archivo", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }
     }

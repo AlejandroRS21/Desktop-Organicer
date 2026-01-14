@@ -1,0 +1,27 @@
+<Window x:Class="DesktopOrganizer.UI.Views.DesktopOverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DesktopOverlay" 
+        WindowStyle="None" 
+        AllowsTransparency="True" 
+        Background="Transparent"
+        Topmost="False"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize">
+    <Grid x:Name="MainGrid">
+        <Canvas x:Name="IconCanvas" Background="Transparent" 
+                MouseLeftButtonDown="IconCanvas_MouseLeftButtonDown"
+                MouseMove="IconCanvas_MouseMove"
+                MouseLeftButtonUp="IconCanvas_MouseLeftButtonUp">
+            <!-- Simulated Icons and Fences will be added here -->
+        </Canvas>
+        
+        <Canvas x:Name="SelectionCanvas" IsHitTestVisible="False">
+            <Border x:Name="SelectionRect" 
+                    BorderBrush="#0078D7" 
+                    BorderThickness="1" 
+                    Background="#330078D7" 
+                    Visibility="Collapsed"/>
+        </Canvas>
+    </Grid>
+</Window>
