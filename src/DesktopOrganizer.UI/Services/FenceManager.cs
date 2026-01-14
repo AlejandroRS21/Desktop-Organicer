@@ -885,16 +885,14 @@ public class FenceManager : IDisposable
         using (var scope = _scopeFactory.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<DesktopOrganizer.Data.Context.DesktopOrganizerDbContext>();
-            var newFence = new DesktopOrganizer.Core.Models.Fence
+            var newFence = new DesktopOrganizer.Core.Models.FenceConfiguration
             {
-                Title = "New Fence",
-                X = x,
-                Y = y,
+                Name = "New Fence",
+                Left = x,
+                Top = y,
                 Width = w,
                 Height = h,
                 Category = "User",
-                HexColor = "#333333",
-                Opacity = 0.5,
                 Extensions = ""
             };
             db.Fences.Add(newFence);
