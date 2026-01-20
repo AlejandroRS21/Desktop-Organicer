@@ -16,13 +16,14 @@ public class FenceManager : IDisposable
     public event Action? FencesUpdated;
 
     private readonly List<FenceWindow> _openFences = new List<FenceWindow>();
-    private readonly DesktopIconManager _iconManager = new DesktopIconManager();
+    private readonly DesktopIconManager _iconManager;
     private readonly IServiceScopeFactory _scopeFactory;
     private bool _fencesVisible = true;
 
-    public FenceManager(IServiceScopeFactory scopeFactory)
+    public FenceManager(IServiceScopeFactory scopeFactory, DesktopIconManager iconManager)
     {
         _scopeFactory = scopeFactory;
+        _iconManager = iconManager;
     }
 
     private void WriteLog(string message)
@@ -39,8 +40,7 @@ public class FenceManager : IDisposable
     {
         try
         {
-            // NEW APPROACH: Hide the entire native desktop listview window
-            _iconManager.HideDesktopListView();
+            // Icon hiding is now handled by DesktopOverlayWindow to ensure proper timing
             
             // Close existing fences
             foreach (var fence in _openFences.ToList())
@@ -866,12 +866,20 @@ public class FenceManager : IDisposable
 
     public FenceWindow? GetFenceWindowAtPoint(Point screenPoint)
     {
+        // Add padding to make targeting easier
+        const double padding = 20;
+        
         foreach (var window in _openFences)
         {
             if (window.Visibility != Visibility.Visible) continue;
 
-            if (screenPoint.X >= window.Left && screenPoint.X <= window.Left + window.Width &&
-                screenPoint.Y >= window.Top && screenPoint.Y <= window.Top + window.Height)
+            double left = window.Left - padding;
+            double top = window.Top - padding;
+            double right = window.Left + window.Width + padding;
+            double bottom = window.Top + window.Height + padding;
+
+            if (screenPoint.X >= left && screenPoint.X <= right &&
+                screenPoint.Y >= top && screenPoint.Y <= bottom)
             {
                 return window;
             }

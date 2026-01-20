@@ -80,15 +80,20 @@ public partial class FenceWindow : Window
             {
                 WriteDebug($"Dropping {files.Length} files: {files[0]}...");
                 _viewModel.AddFiles(files);
+                // Signal that drop was successful
+                e.Effects = DragDropEffects.Move;
+                e.Handled = true;
             }
             else
             {
                 WriteDebug("FileDrop present but files array is null/empty");
+                e.Effects = DragDropEffects.None;
             }
         }
         else
         {
             WriteDebug("No FileDrop data found");
+            e.Effects = DragDropEffects.None;
         }
     }
 

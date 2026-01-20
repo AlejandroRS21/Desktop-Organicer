@@ -94,6 +94,7 @@ public partial class App : Application
         // Register FenceManager
         services.AddSingleton<DesktopOrganizer.UI.Services.FenceManager>();
         services.AddSingleton<DesktopOrganizer.UI.Services.ThemeManager>();
+        services.AddSingleton<DesktopOrganizer.UI.Helpers.DesktopIconManager>();
 
         // ViewModels
         services.AddTransient<MainWindowViewModel>();

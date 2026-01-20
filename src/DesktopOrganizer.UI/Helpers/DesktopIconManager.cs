@@ -448,6 +448,49 @@ public class DesktopIconManager
     }
 
     /// <summary>
+    /// Get all desktop icon names and their screen positions.
+    /// </summary>
+    public Dictionary<string, (int X, int Y)> GetAllIconPositions()
+    {
+        var positions = new Dictionary<string, (int X, int Y)>(StringComparer.OrdinalIgnoreCase);
+        
+        if (_desktopListView == IntPtr.Zero)
+            FindDesktopListView();
+
+        if (_desktopListView == IntPtr.Zero)
+            return positions;
+
+        // Get process handle for the desktop window
+        GetWindowThreadProcessId(_desktopListView, out uint processId);
+        IntPtr hProcess = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, processId);
+        if (hProcess == IntPtr.Zero)
+            return positions;
+
+        try
+        {
+            int itemCount = (int)SendMessage(_desktopListView, LVM_GETITEMCOUNT, IntPtr.Zero, IntPtr.Zero);
+            
+            for (int i = 0; i < itemCount; i++)
+            {
+                string? name = GetItemText(hProcess, i);
+                if (string.IsNullOrEmpty(name)) continue;
+                
+                var pos = GetItemPosition(i);
+                if (pos.HasValue)
+                {
+                    positions[name] = pos.Value;
+                }
+            }
+        }
+        finally
+        {
+            CloseHandle(hProcess);
+        }
+        
+        return positions;
+    }
+
+    /// <summary>
     /// Get the current position of a desktop icon by index.
     /// </summary>
     private (int X, int Y)? GetItemPosition(int itemIndex)
